@@ -94,6 +94,9 @@ public class Population {
 			//gerar o novo cromossomo com base no tamanho
 			tChom = new Chromosome();
 			int sizeCh=rand.nextInt(ConfigurationsGA.SIZE_CHROMOSOME)+1;
+			
+			///// individuo 0
+			// sortear de 1 a size
 			for (int j = 0; j < sizeCh; j++) {
 				tChom.addGene(rand.nextInt(scrTable.getCurrentSizeTable()));
 			}
