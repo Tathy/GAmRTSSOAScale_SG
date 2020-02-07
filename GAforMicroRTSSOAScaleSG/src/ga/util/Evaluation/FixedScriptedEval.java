@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ga.ScriptTableGenerator.ScriptsTable;
 import ga.model.Chromosome;
 import ga.model.Population;
 import model.EvalResult;
@@ -41,7 +42,7 @@ public class FixedScriptedEval implements RatePopulation {
 	}
 
 	@Override
-	public Population evalPopulation(Population population, int generation) {
+	public Population evalPopulation(Population population, int generation, ScriptsTable scriptsTable) {
 		this.atualGeneration = generation;
 		SOA_Folders.clear();
 

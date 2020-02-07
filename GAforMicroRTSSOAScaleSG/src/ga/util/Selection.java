@@ -38,7 +38,17 @@ public class Selection {
 		//using crossover and mutation
 		Reproduction rp=new Reproduction(parents,scrTable,pathTableScripts);
 		//Population newPopulation=rp.UniformCrossover();
-		Population newPopulation=rp.Crossover();
+		
+		Population newPopulation;
+		if(ConfigurationsGA.evolvingScript)
+		{
+			newPopulation=rp.CrossoverSingleScript();
+		}
+		else
+		{
+			newPopulation=rp.Crossover();
+		}
+		
 		//System.out.println("printing the new population after crossover");
 		//printMap(newPopulation.getChromosomes());
 		newPopulation=rp.mutation(newPopulation);
@@ -55,8 +65,11 @@ public class Selection {
 
 		//in elite is saved the best guys from the last population
 		HashMap<Chromosome, BigDecimal> elite=(HashMap<Chromosome, BigDecimal>)ps.sortByValue(populacaoInicial.getChromosomes());
-		//System.out.println("printing elite last population");
-		//printMap(elite);
+//		System.out.println("printing elite last population");
+//		printMap(elite);
+		
+		//here we mutate copy of the elite individuals and add to the population 
+		newPopulation=rp.eliteMutated(newPopulation,elite);
 
 		//joining elite and new sons in chromosomesNewPopulation, 
 		HashMap<Chromosome, BigDecimal> chromosomesNewPopulation=new HashMap<Chromosome, BigDecimal>();

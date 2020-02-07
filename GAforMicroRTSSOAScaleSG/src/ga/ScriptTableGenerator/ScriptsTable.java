@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import ai.ScriptsGenerator.TableGenerator.FunctionsforGrammar;
 import ai.ScriptsGenerator.TableGenerator.Parameter;
@@ -38,6 +39,10 @@ public class ScriptsTable {
 	private FunctionsforGrammar functions;
 
 	private String pathTableScripts;
+	
+	public ScriptsTable(){
+		functions=new FunctionsforGrammar();
+	}
 
 	public ScriptsTable(String pathTableScripts){
 		this.scriptsTable = new HashMap<>();
@@ -90,7 +95,7 @@ public class ScriptsTable {
 	//static methods
 
 	public ScriptsTable generateScriptsTable(int size){
-
+		
 		HashMap<String, BigDecimal> newChromosomes = new HashMap<>();
 		String tChom;
 		PrintWriter f0;
@@ -103,7 +108,14 @@ public class ScriptsTable {
 				//tChom = new ChromosomeScript();				
 				//int sizeCh=rand.nextInt(ConfigurationsGA.SIZE_CHROMOSOME_SCRIPT)+1;
 				int sizeCh=rand.nextInt(ConfigurationsGA.MAX_QTD_COMPONENTS)+1;
-				tChom=buildScriptGenotype(sizeCh);
+				if(ConfigurationsGA.sketch)
+				{
+					tChom=buildScriptGenotypeSketch();
+				}
+				else
+				{
+					tChom=buildScriptGenotype(sizeCh);
+				}
 
 				//				for (int j = 0; j < sizeCh; j++) {
 				//					int typeSelected=rand.nextInt(numberOfTypes);
@@ -164,7 +176,7 @@ public class ScriptsTable {
 
 				if(collectionofIfs.size()>0)
 				{
-					for (int i = collectionofIfs.size()-1; i == 0; i-- ) {
+					for (int i = collectionofIfs.size()-1; i >= 0; i-- ) {
 
 						if(collectionofIfs.get(i).isLastOpen()==false)
 						{
@@ -191,7 +203,7 @@ public class ScriptsTable {
 
 				if(collectionofIfs.size()>0)
 				{
-					for (int i = collectionofIfs.size()-1; i == 0; i-- ) {
+					for (int i = collectionofIfs.size()-1; i >= 0; i-- ) {
 
 						if(collectionofIfs.get(i).isLastOpen()==false)
 						{
@@ -222,7 +234,7 @@ public class ScriptsTable {
 
 				if(collectionofIfs.size()>0)
 				{
-					for (int i = collectionofIfs.size()-1; i == 0; i-- ) {
+					for (int i = collectionofIfs.size()-1; i >= 0; i-- ) {
 
 						if(collectionofIfs.get(i).isLastOpen()==false)
 						{
@@ -257,9 +269,9 @@ public class ScriptsTable {
 					
 					if(collectionofIfs.get(collectionofIfs.size()-1).getMaxOpens()==0)
 					{
-						for (int i = collectionofIfs.size()-1; i == 0; i-- ) {
+						for (int i = collectionofIfs.size()-1; i >= 0; i-- ) {
 
-							if(collectionofIfs.get(i).isLastOpen()==false)
+							if(collectionofIfs.get(i).isLastOpen()==false) 
 							{
 
 								collectionofIfs.remove(i);
@@ -304,9 +316,16 @@ public class ScriptsTable {
 			{
 				while(collectionofIfs.size()>0)
 				{
-					genotypeScript=genotypeScript.substring(0, genotypeScript.length() - 1);
-					genotypeScript=genotypeScript+") ";
-					collectionofIfs.remove(collectionofIfs.size()-1);
+					if(collectionofIfs.get(collectionofIfs.size()-1).isLastOpen())
+					{
+						genotypeScript=genotypeScript.substring(0, genotypeScript.length() - 1);
+						genotypeScript=genotypeScript+") ";
+						collectionofIfs.remove(collectionofIfs.size()-1);
+					}
+					else
+					{
+						collectionofIfs.remove(collectionofIfs.size()-1);
+					}
 
 				}
 
@@ -333,6 +352,38 @@ public class ScriptsTable {
 
 		return genotypeScript;
 
+	}
+	
+	public String buildScriptGenotypeSketch()
+	{
+		String genotypeScript = "";
+		int numberComponentsAdded=0;
+		Sketch sk=new Sketch();
+		if(ConfigurationsGA.idSketch=="A")
+		{
+			genotypeScript=sk.sketchA(genotypeScript,numberComponentsAdded);
+			genotypeScript=genotypeScript.trim();
+			//basicFunction=basicFunction+") ";
+			
+		}
+		
+		if(ConfigurationsGA.idSketch=="B")
+		{
+			genotypeScript=sk.sketchB(genotypeScript,numberComponentsAdded);
+			genotypeScript=genotypeScript.trim();
+			//basicFunction=basicFunction+") ";
+			
+		}
+		
+		if(ConfigurationsGA.idSketch=="C")
+		{
+			genotypeScript=sk.sketchC(genotypeScript,numberComponentsAdded);
+			genotypeScript=genotypeScript.trim();
+			//basicFunction=basicFunction+") ";
+			
+		}
+
+		return genotypeScript;
 	}
 
 	public String returnBasicFunction(Boolean forclausule)
@@ -365,7 +416,6 @@ public class ScriptsTable {
 			{
 				limitInferior=(int)parameter.getInferiorLimit();
 				limitSuperior=(int)parameter.getSuperiorLimit();
-				System.out.println("sup "+limitSuperior+" "+"inf "+limitInferior);
 				int parametherValueChosen;
 				if(limitSuperior!=limitInferior)
 				{
@@ -496,6 +546,131 @@ public class ScriptsTable {
 		//basicFunction=basicFunction+") ";
 		return basicFunction+")";
 	}
+	
+	public String returnBasicFunctionCleanSame(Boolean forclausule,String oldFunction)
+	{
+		String basicFunction="";
+		int limitInferior;
+		int limitSuperior;
+		String discreteValue;
+		FunctionsforGrammar functionChosen=new FunctionsforGrammar();
+		String parts[]=oldFunction.split("[\\W]");
+		List<Integer> parametersDiscrete=new ArrayList<Integer>();
+		for(String part: parts)
+		{
+			if(Pattern.compile( "[0-9]" ).matcher(part).find()	)
+				{
+					
+					parametersDiscrete.add(Integer.valueOf(part));
+				}
+		}
+		
+		//int id=rand.nextInt(ConfigurationsGA.QTD_RULES_BASIC_FUNCTIONS);
+		if(forclausule==false)
+		{
+			for(FunctionsforGrammar lis: functions.getBasicFunctionsForGrammar())
+			{
+				if(oldFunction.startsWith(lis.getNameFunction()))
+				{
+					functionChosen=lis;
+				}
+			}
+			
+		}
+		else
+		{
+			for(FunctionsforGrammar lis: functions.getBasicFunctionsForGrammarUnit())
+			{
+				if(oldFunction.startsWith(lis.getNameFunction()))
+				{
+					functionChosen=lis;
+					
+				}
+			}
+		}
+
+		basicFunction=basicFunction+functionChosen.getNameFunction()+"(";
+		for(Parameter parameter:functionChosen.getParameters())
+		{
+			if(parameter.getParameterName()=="u")
+			{				
+				basicFunction=basicFunction+"u,";
+			}
+			else if(parameter.getDiscreteSpecificValues()==null)
+			{
+				int currentValueParameter=parametersDiscrete.get(0);
+				parametersDiscrete.remove(0);
+				
+				boolean m = rand.nextFloat() <= 0.5;
+				limitInferior=(int)parameter.getInferiorLimit();
+				limitSuperior=(int)parameter.getSuperiorLimit();
+				
+				if(m)
+				{
+					if(!(currentValueParameter+ ConfigurationsGA.deltaForMutation>=limitSuperior))
+					{
+						if(limitSuperior!=limitInferior)
+						{
+							currentValueParameter = currentValueParameter + ConfigurationsGA.deltaForMutation;
+						}
+						else
+						{
+							currentValueParameter=limitSuperior;
+						}
+					}
+					else if(!(currentValueParameter- ConfigurationsGA.deltaForMutation<=limitInferior))
+					{
+						if(limitSuperior!=limitInferior)
+						{
+							currentValueParameter = currentValueParameter - ConfigurationsGA.deltaForMutation;
+						}
+						else
+						{
+							currentValueParameter=limitInferior;
+						}
+					}	
+				}
+				else
+				{
+					if(!(currentValueParameter- ConfigurationsGA.deltaForMutation<=limitInferior))
+					{
+						if(limitSuperior!=limitInferior)
+						{
+							currentValueParameter = currentValueParameter - ConfigurationsGA.deltaForMutation;
+						}
+						else
+						{
+							currentValueParameter=limitInferior;
+						}
+					}	
+					else if(!(currentValueParameter+ ConfigurationsGA.deltaForMutation>=limitSuperior))
+					{
+						if(limitSuperior!=limitInferior)
+						{
+							currentValueParameter = currentValueParameter + ConfigurationsGA.deltaForMutation;
+						}
+						else
+						{
+							currentValueParameter=limitSuperior;
+						}
+					}
+				}
+				
+
+
+				basicFunction=basicFunction+currentValueParameter+",";
+			}
+			else
+			{
+				int idChosen=rand.nextInt(parameter.getDiscreteSpecificValues().size());
+				discreteValue=parameter.getDiscreteSpecificValues().get(idChosen);
+				basicFunction=basicFunction+discreteValue+",";
+			}
+		}
+		basicFunction=basicFunction.substring(0, basicFunction.length() - 1);
+		//basicFunction=basicFunction+") ";
+		return basicFunction+")";
+	}
 
 	public String returnConditionalClean(boolean forClausule)
 	{
@@ -544,6 +719,108 @@ public class ScriptsTable {
 		//conditional="if("+conditional+")) ";
 		return conditional+")";
 	}
+	
+	public String returnConditionalCleanSame(boolean forClausule, String oldFunction)
+	{
+		String conditional="";
+		int limitInferior;
+		int limitSuperior;
+		String discreteValue;
+		FunctionsforGrammar functionChosen=new FunctionsforGrammar();
+		String parts[]=oldFunction.split("[\\W]");
+		List<Integer> parametersDiscrete=new ArrayList<Integer>();
+		for(String part: parts)
+		{
+			if(Pattern.compile( "[0-9]" ).matcher(part).find())
+				{
+					parametersDiscrete.add(Integer.valueOf(part));
+				}
+		}
+		
+		//int id=rand.nextInt(ConfigurationsGA.QTD_RULES_BASIC_FUNCTIONS);
+		if(forClausule==false)
+		{
+			for(FunctionsforGrammar lis: functions.getConditionalsForGrammar())
+			{
+				if(oldFunction.startsWith(lis.getNameFunction()))
+				{
+					functionChosen=lis;
+				}
+			}
+			
+		}
+		else
+		{
+			for(FunctionsforGrammar lis: functions.getConditionalsForGrammarUnit())
+			{
+				if(oldFunction.startsWith(lis.getNameFunction()))
+				{
+					functionChosen=lis;
+				}
+			}
+		}
+
+		conditional=conditional+functionChosen.getNameFunction()+"(";
+		for(Parameter parameter:functionChosen.getParameters())
+		{
+			if(parameter.getParameterName()=="u")
+			{				
+				conditional=conditional+"u,";
+			}
+			else if(parameter.getDiscreteSpecificValues()==null)
+			{
+				int currentValueParameter=parametersDiscrete.get(0);
+				parametersDiscrete.remove(0);
+				
+				boolean m = rand.nextFloat() <= 0.5;
+				limitInferior=(int)parameter.getInferiorLimit();
+				limitSuperior=(int)parameter.getSuperiorLimit();
+				
+				if(m)
+				{
+					if(!(currentValueParameter+ConfigurationsGA.deltaForMutation>limitSuperior))
+					{
+						if(limitSuperior!=limitInferior)
+						{
+							currentValueParameter = currentValueParameter + ConfigurationsGA.deltaForMutation;
+						}
+						else
+						{
+							currentValueParameter=limitSuperior;
+						}
+					}
+				}
+				else
+				{
+					if(!(currentValueParameter-ConfigurationsGA.deltaForMutation<=limitInferior))
+					{
+						if(limitSuperior!=limitInferior)
+						{
+							currentValueParameter = currentValueParameter - ConfigurationsGA.deltaForMutation;
+						}
+						else
+						{
+							currentValueParameter=limitInferior;
+						}
+					}					
+				}
+				
+
+
+				conditional=conditional+currentValueParameter+",";
+			}
+			else
+			{
+				int idChosen=rand.nextInt(parameter.getDiscreteSpecificValues().size());
+				discreteValue=parameter.getDiscreteSpecificValues().get(idChosen);
+				conditional=conditional+discreteValue+",";
+			}
+		}
+		conditional=conditional.substring(0, conditional.length() - 1);
+		//basicFunction=basicFunction+") ";
+		return conditional+")";
+
+	}
 
 	//THis method uses a preexistent table of scripts instead of create a new one
 	public ScriptsTable generateScriptsTableCurriculumVersion(){
@@ -578,6 +855,38 @@ public class ScriptsTable {
 		//st.print();
 		return st;
 	}
+	
+	//THis method uses a preexistent table of scripts instead of create a new one
+	public ScriptsTable generateScriptsTableRecover(){
+
+		HashMap<String, BigDecimal> newChromosomes = new HashMap<>();
+		ChromosomeScript tChom;
+		try (BufferedReader br = new BufferedReader(new FileReader(pathTableScripts + "/ScriptsTable.txt"))) {
+			String line;            
+			while ((line = br.readLine()) != null) {
+				String[] strArray = line.split(" ");
+
+				int idScript = Integer.parseInt(strArray[0]);
+				String rules = line.replaceFirst(strArray[0]+" ", "");
+
+				tChom = new ChromosomeScript();
+//				for (int i : rules) {
+//					tChom.addGene(i);
+//				}
+				newChromosomes.put(rules, BigDecimal.valueOf(idScript));;
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ScriptsTable st = new ScriptsTable(newChromosomes,pathTableScripts);
+		//st.print();
+		return st;
+	}
+
 
 	public int getCurrentSizeTable() {
 		return currentSizeTable;

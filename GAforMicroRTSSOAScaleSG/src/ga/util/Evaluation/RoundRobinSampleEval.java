@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
+import ga.ScriptTableGenerator.ScriptsTable;
 import ga.model.Chromosome;
 import ga.model.Population;
 import model.EvalResult;
@@ -45,7 +46,7 @@ public class RoundRobinSampleEval implements RatePopulation {
 	}
 
 	@Override
-	public Population evalPopulation(Population population, int generation) {
+	public Population evalPopulation(Population population, int generation, ScriptsTable scriptsTable) {
 		this.atualGeneration = generation;
 		SOA_Folders.clear();
 		// limpa os valores existentes na population

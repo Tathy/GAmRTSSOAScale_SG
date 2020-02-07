@@ -1,5 +1,6 @@
 package ga.util.Evaluation;
 
+import ga.ScriptTableGenerator.ScriptsTable;
 import ga.model.Population;
 
 public interface RatePopulation {
@@ -9,6 +10,6 @@ public interface RatePopulation {
 	*  KEYS   = Cromossomo
 	*  VALUES = Valor da avaliação 
 	*/
-	public Population evalPopulation(Population population, int generation);
+	public Population evalPopulation(Population population, int generation, ScriptsTable scriptsTable);
 	public void finishProcess();
 }

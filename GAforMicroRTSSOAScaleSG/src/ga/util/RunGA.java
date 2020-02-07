@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import ga.ScriptTableGenerator.ScriptsTable;
 import ga.config.ConfigurationsGA;
@@ -22,6 +26,7 @@ public class RunGA {
 	private final String pathTableScripts = System.getProperty("user.dir").concat("/Table/");
 	private final String pathLogs = System.getProperty("user.dir").concat("/Tracking/");
 	private final String pathInitialPopulation = System.getProperty("user.dir").concat("/InitialPopulation/");
+	private final String pathUsedCommands = System.getProperty("user.dir").concat("/commandsUsed/");
 	
 	static int [] frequencyIdsRulesForUCB= new int[ConfigurationsGA.QTD_RULES];
 	static int numberCallsUCB11=0;
@@ -38,13 +43,13 @@ public class RunGA {
 		// Creating the table of scripts
 		scrTable = new ScriptsTable(pathTableScripts);
 		//do {
-			if(!ConfigurationsGA.curriculum)
+			if(!ConfigurationsGA.recoverTable)
 			{
 				scrTable = scrTable.generateScriptsTable(ConfigurationsGA.SIZE_TABLE_SCRIPTS);
 			}
 			else
 			{
-				scrTable = scrTable.generateScriptsTableCurriculumVersion();
+				scrTable = scrTable.generateScriptsTableRecover();
 			}
 		   //}while(scrTable.checkDiversityofTypes());
 		scrTable.setCurrentSizeTable(scrTable.getScriptTable().size());
@@ -62,10 +67,49 @@ public class RunGA {
 			else
 			{
 				population = Population.getInitialPopulationCurriculum(ConfigurationsGA.SIZE_POPULATION, scrTable, pathInitialPopulation);
-			}
+			}			
+			
 
 			// Fase 2 = avalia a população
-			population = evalFunction.evalPopulation(population, this.generations);
+			population = evalFunction.evalPopulation(population, this.generations, scrTable);
+			
+//			population.printWithValue(f0);
+//			System.out.println("sep");
+			
+			//Get all the used commands
+			if(ConfigurationsGA.removeRules==true)
+				population.fillAllCommands(pathTableScripts);
+//		    Iterator it = population.getAllCommandsperGeneration().entrySet().iterator();
+//		    while (it.hasNext()) {
+//		        Map.Entry pair = (Map.Entry)it.next();
+//		        int id=(Integer)pair.getKey();
+//		        List<String> scripts= (List<String>) pair.getValue();
+//		        System.out.println("key "+id+" "+scripts);
+//		    }
+			//Choose the used commands
+			if(ConfigurationsGA.removeRules==true)
+				population.chooseusedCommands(pathUsedCommands);
+//		    Iterator it = population.getUsedCommandsperGeneration().entrySet().iterator();
+//		    while (it.hasNext()) {
+//		        Map.Entry pair = (Map.Entry)it.next();
+//		        int id=(Integer)pair.getKey();
+//		        List<String> scripts= (List<String>) pair.getValue();
+//		        System.out.println("key "+id+" "+scripts);
+//		        //it.remove(); // avoids a ConcurrentModificationException
+//		    }
+			
+			//Remove used commands from all commands
+			if(ConfigurationsGA.removeRules==true)
+				population.removeCommands(scrTable);
+			
+//		    Iterator it2 = population.getAllCommandsperGeneration().entrySet().iterator();
+//		    while (it2.hasNext()) {
+//		        Map.Entry pair = (Map.Entry)it2.next();
+//		        int id=(Integer)pair.getKey();
+//		        List<String> scripts= (List<String>) pair.getValue();
+//		        System.out.println("key "+id+" "+scripts);
+//		    }
+			
 			System.out.println("Log - Generation = " + this.generations);
 			f0.println("Log - Generation = " + this.generations);
 			population.printWithValue(f0);
@@ -80,7 +124,26 @@ public class RunGA {
 			population = selecao.applySelection(population, scrTable, pathTableScripts);
 
 			// Repete-se Fase 2 = Avaliação da população
-			population = evalFunction.evalPopulation(population, this.generations);
+			population = evalFunction.evalPopulation(population, this.generations, scrTable);
+			
+			//Get all the used commands
+			if(ConfigurationsGA.removeRules==true)
+				population.fillAllCommands(pathTableScripts);
+			
+			//Remove the unused commands
+			if(ConfigurationsGA.removeRules==true)
+				population.chooseusedCommands(pathUsedCommands);
+//		    Iterator it = population.getUsedCommandsperGeneration().entrySet().iterator();
+//		    while (it.hasNext()) {
+//		        Map.Entry pair = (Map.Entry)it.next();
+//		        int id=(Integer)pair.getKey();
+//		        List<String> scripts= (List<String>) pair.getValue();
+//		        System.out.println("key "+id+" "+scripts);
+//		        //it.remove(); // avoids a ConcurrentModificationException
+//		    }
+			//Remove used commands from all commands
+			if(ConfigurationsGA.removeRules==true)
+				population.removeCommands(scrTable);
 
 			// atualiza a geração
 			updateGeneration();
