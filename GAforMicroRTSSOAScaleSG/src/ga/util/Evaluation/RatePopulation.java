@@ -4,9 +4,10 @@ import ga.ScriptTableGenerator.ScriptsTable;
 import ga.model.Population;
 
 public interface RatePopulation {
-	/* A fun√ß√£o de avalia√ß√£o ir√° controlar as chamadas no cluster, ou fazer os c√°lculos das simula√ß√µes e entregar
-	*  uma popula√ß√£o devidamente avaliada.
-	*  Lembrar que na popula√ß√£o os cromossomos est√£o em um MAP onde 
+	/* 
+	*  A funÁ„o de avaliaÁ„o ir· controlar as chamadas no cluster, ou fazer os c·lculos das simulaÁıes e entregar
+	*  uma populaÁ„o devidamente avaliada.
+	*  Lembrar que na populaÁ„o os cromossomos est„o em um MAP onde 
 	*  KEYS   = Cromossomo
 	*  VALUES = Valor da avalia√ß√£o 
 	*/

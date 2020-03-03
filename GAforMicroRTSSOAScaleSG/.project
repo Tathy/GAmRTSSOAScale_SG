@@ -3,6 +3,7 @@
 	<name>GAforMicroRTSSOAScaleSG</name>
 	<comment></comment>
 	<projects>
+		<project>MicroRTSinterface</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

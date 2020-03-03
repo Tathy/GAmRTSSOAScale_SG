@@ -6,9 +6,9 @@ import java.util.ArrayList;
 /**
  * 
  * @author rubens
- * Os genes do cromossomos ser√£o correspondentes aos scripts que ser√£o utilizados no portf√≥lio.
- * Os genes ser√£o representados como n√∫meros inteiros iniciando em 0. 
- * Cada gene corresponde √† um script da classe BasicExpandedConfigurableScript
+ * Os genes dos cromossomos ser„o correspondentes aos scripts que ser„o utilizados no portfÛlio.
+ * Os genes ser„o representados como n˙meros inteiros iniciando em 0. 
+ * Cada gene corresponde a um script da classe BasicExpandedConfigurableScript
  */
 public class Chromosome {
 	private ArrayList<Integer> Genes;

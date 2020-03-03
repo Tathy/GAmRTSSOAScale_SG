@@ -18,36 +18,41 @@ import ga.model.Population;
 public class PreSelection {
 
 	Population p;
-	public PreSelection(Population p)
-	{
+	
+	public PreSelection(Population p){
 		this.p=p;
 	}
-	public List<Map.Entry<Chromosome, BigDecimal>> Tournament()
-	{
+	
+	public List<Map.Entry<Chromosome, BigDecimal>> Tournament(){
 		//we want to select some parents (list parents) from all the population (listCandidates)
+		// Controle de pais adicionados para seleção, lista de pais, lista de candidatos com população passada no construtor da classe (populacaoInicial)
 		int parentsAdded=0;
 		List<Map.Entry<Chromosome, BigDecimal>> listParents= new ArrayList();
 		List<Map.Entry<Chromosome, BigDecimal>> listCandidates = new ArrayList<Map.Entry<Chromosome, BigDecimal>>(p.getChromosomes().entrySet());
-		while(parentsAdded<ConfigurationsGA.SIZE_PARENTSFORCROSSOVER)
-		{
+		
+		while(parentsAdded < ConfigurationsGA.SIZE_PARENTSFORCROSSOVER) { // SIZE_PARENTSFORCROSSOVER = 40 (vai mudar na próxima etapa do TCC)
 			//here we randomize the list in order to select k random elements for the tournament
+			// Embaralha itens da lista de candidatos
 			Collections.shuffle(listCandidates);
-			Map.Entry<Chromosome, BigDecimal> best=null;
+			
+			// Melhor indivíduo do torneio
+			Map.Entry<Chromosome, BigDecimal> best = null;
 
-			for(int i=0; i<ConfigurationsGA.K_TOURNMENT; i++)
-			{
-
-				if(best==null || listCandidates.get(i).getValue().intValue()>best.getValue().intValue())
-				{
-					best=listCandidates.get(i);
+			// Compara K_TOURNMENT aleatórios (primeiros da lista embaralhada) e escolhe o que obteve melhor resultado nas avaliações anteriores
+			for(int i=0; i < ConfigurationsGA.K_TOURNMENT; i++) { // K_TOURNMENT = 25 (vai mudar na próxima etapa do TCC)
+				if( best==null || listCandidates.get(i).getValue().intValue() > best.getValue().intValue()){
+					best = listCandidates.get(i);
 				}
 			}
 			//here we add the champion as a parent
+			// O melhor indivíduo é colocado na lista de pais que servirá de base para a próxima geração
 			listParents.add(best);
 			parentsAdded++;
 		}
+		
 		return listParents;
 	}
+	
 	public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
 		List list = new LinkedList(map.entrySet());
 

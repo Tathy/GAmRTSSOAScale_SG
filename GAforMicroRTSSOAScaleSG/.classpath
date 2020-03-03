@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-<<<<<<< HEAD
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/MicroRTSinterface"/>
-=======
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/MicroRTS2"/>
-	<classpathentry kind="lib" path="C:/Users/Ingeniero Gil/Desktop/cosas/jdom.jar/jdom.jar"/>
->>>>>>> branch 'scripts_evol_allsketchs' of https://github.com/jr9Hernandez/GAmRTSSOAScale_SG
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/MicroRTSinterface"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/javax.persistence-2.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/jdom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/minimal-json-0.9.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/weka.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
