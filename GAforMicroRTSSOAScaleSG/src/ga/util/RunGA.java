@@ -18,7 +18,6 @@ import util.sqlLite.Log_Facade;
 
 
 // Modificado para rodar com Script criado através da interface
-//TESTE
 
 public class RunGA {
 
@@ -60,6 +59,7 @@ public class RunGA {
 				// Preenche tabela de scripts com o indivíduo vindo da interface com a key 0
 				scrTable = scrTable.generateScriptsTable(ConfigurationsGA.SIZE_TABLE_SCRIPTS);
 				scrTable2 = scrTable2.generateScriptsTableMutation(ConfigurationsGA.SIZE_TABLE_SCRIPTS_MUTATION);
+				System.out.println("teste");
 			} else {
 				scrTable = scrTable.generateScriptsTableRecover();
 			}
@@ -168,7 +168,7 @@ public class RunGA {
 			if(ConfigurationsGA.removeRules==true)
 				population.removeCommands(scrTable);
 
-			// atualiza a geraÃ§Ã£o
+			// atualiza a geração
 			updateGeneration();
 
 			//System.out.println("Log - Generation = " + this.generations);

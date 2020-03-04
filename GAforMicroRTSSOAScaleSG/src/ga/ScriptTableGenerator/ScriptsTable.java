@@ -23,6 +23,7 @@ import ai.ScriptsGenerator.TableGenerator.TableCommandsGenerator;
 import ga.config.ConfigurationsGA;
 import ga.model.Chromosome;
 import ga.model.Population;
+import ga.util.Reproduction;
 import rts.units.UnitTypeTable;
 
 
@@ -61,8 +62,9 @@ public class ScriptsTable {
 	}
 
 
-	public ScriptsTable(HashMap<String, BigDecimal> scriptsTable,String pathTableScripts) {
+	public ScriptsTable(HashMap<String, BigDecimal> scriptsTable,String pathTableScripts, String id) {
 		super();
+		this.id = id;
 		this.scriptsTable = scriptsTable;
 		this.pathTableScripts=pathTableScripts;
 		this.tcg=TableCommandsGenerator.getInstance(new UnitTypeTable());
@@ -110,7 +112,7 @@ public class ScriptsTable {
 		String tChom;
 		PrintWriter f0;
 		try {
-			f0 = new PrintWriter(new FileWriter(pathTableScripts+"ScriptsTable.txt"));
+			f0 = new PrintWriter(new FileWriter(pathTableScripts+"ScriptsTable" + this.id + ".txt"));
 
 			int i=0;
 			while(i<size){
@@ -166,7 +168,7 @@ public class ScriptsTable {
 			e.printStackTrace();
 		}		
 
-		ScriptsTable st = new ScriptsTable(newChromosomes,pathTableScripts);
+		ScriptsTable st = new ScriptsTable(newChromosomes,pathTableScripts, this.id);
 		return st;
 	}
 	
@@ -179,7 +181,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		PrintWriter f2;
 		
 		try {
-			f2 = new PrintWriter(new FileWriter(pathTableScripts+"ScriptsTable2.txt"));
+			f2 = new PrintWriter(new FileWriter(pathTableScripts + "ScriptsTable" + this.id + ".txt"));
 
 			int i=0;
 			while(i<size){
@@ -194,7 +196,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 							while(br.ready()){
 								String linha = br.readLine();
 								//System.out.println("Script do arquivo: " + linha);
-								tChom0 = tChom0 + linha;
+								tChom0 = tChom0 + " " + linha;
 							}
 							tChom = tChom0;
 							br.close();
@@ -205,7 +207,8 @@ public ScriptsTable generateScriptsTableMutation(int size){
 						
 					} else {
 						tChom = buildScriptMutation(tChom0);
-						System.out.println("TESTE: i = " + i + " size = " + size);
+						
+						System.out.println("Iteração = " + i + " size = " + size);
 						System.out.println("Novo script na mutação: " + tChom);
 					}
 
@@ -227,7 +230,8 @@ public ScriptsTable generateScriptsTableMutation(int size){
 			e.printStackTrace();
 		}		
 
-		ScriptsTable st = new ScriptsTable(newChromosomes, pathTableScripts);
+		ScriptsTable st = new ScriptsTable(newChromosomes, pathTableScripts, this.id);
+		System.out.println("Tabela preenchida com população inicial!");
 		return st;
 	}
 
@@ -913,7 +917,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ScriptsTable st = new ScriptsTable(newChromosomes,pathTableScripts);
+		ScriptsTable st = new ScriptsTable(newChromosomes,pathTableScripts, this.id);
 		//st.print();
 		return st;
 	}
@@ -944,7 +948,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ScriptsTable st = new ScriptsTable(newChromosomes,pathTableScripts);
+		ScriptsTable st = new ScriptsTable(newChromosomes,pathTableScripts, this.id);
 		//st.print();
 		return st;
 	}
@@ -1003,13 +1007,16 @@ public ScriptsTable generateScriptsTableMutation(int size){
 	    // Itera sobre todas as partes e faz tratamento de strings
 	    for(int i = 0; i < parts.length; i++) {
 	    	// Retira ifs e parênteses do começo
-		    parts[i] = removeFromBeggining(parts[i]);
+		    //parts[i] = removeFromBeggining(parts[i]);
+		    parts[i] = Reproduction.removeFromBeggining(parts[i]);
 		    // Retira parênteses do final
-		    parts[i] = removeFromLast(parts[i]);
+		    //parts[i] = removeFromLast(parts[i]);
+		    parts[i] = Reproduction.removeFromLast(parts[i]);
 	    }
 	    
 	    // Retorna novo conjunto de scripts após o processo de mutação
-	    news = chossingFromBag(news, parts, basicFunctions, conditionalFunctions);
+	    //news = chossingFromBag(news, parts, basicFunctions, conditionalFunctions);
+	    news = Reproduction.chossingFromBag(news, parts, basicFunctions, conditionalFunctions, true);
 	    
 	    // Itera sobre todo o vetor de partes, sorteia a chance de mutação e substitui o novo cromossomo sobre o antigo que sofre mutação
 	    for(int i=0; i <parts.length; i++){
@@ -1017,11 +1024,12 @@ public ScriptsTable generateScriptsTableMutation(int size){
 	    	boolean m = rand.nextFloat() <= mutatePercent;
 
 	    	if(m)
-	    		tChom = replaceFromCompleteGrammar(parts[i], news[i], tChom );
+	    		tChom = Reproduction.replaceFromCompleteGrammar(parts[i], news[i], tChom);
+	    		//tChom = replaceFromCompleteGrammar(parts[i], news[i], tChom );
 	    }
 	    
 	    // Caso o novo cromossomo gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
-	    tChom = removingTrashFromGrammar(tChom);
+	    tChom = Reproduction.removingTrashFromGrammar(tChom);
 		if(scriptsTable.containsKey(tChom)){
 			return tChom;			
 		} else {
@@ -1031,12 +1039,14 @@ public ScriptsTable generateScriptsTableMutation(int size){
 			int newId = scriptsTable.size();
 			scriptsTable.put(tChom, BigDecimal.valueOf(newId));
 			setCurrentSizeTable(scriptsTable.size());
-			addLineFile(newId + " " + tChom);
+			Reproduction.addLineFile(newId + " " + tChom);
 			return tChom;
 		}
 		
 	}
 	
+	
+	/*
 	public static String removeFromBeggining(String s){
 		String cloneS = s;
 		  
@@ -1187,5 +1197,6 @@ public ScriptsTable generateScriptsTableMutation(int size){
 	        e.printStackTrace();    
 	    } 
 	}
+	*/
 	
 }

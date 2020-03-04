@@ -33,7 +33,7 @@ public class Reproduction {
 	ScriptsTable scrTable;
 	FunctionsforGrammar functions;
 	
-	private String pathTableScripts; 
+	private static String pathTableScripts; 
 	
 	public Reproduction(List<Map.Entry<Chromosome, BigDecimal>> parents,ScriptsTable scrTable, String pathTableScripts){
 		this.parents = parents;
@@ -529,7 +529,7 @@ public class Reproduction {
 	    */
 	    
 	    // Retorna novo conjunto de scripts após o processo de mutação
-	    news = chossingFromBag(news, parts, basicFunctions, conditionalFunctions);
+	    news = chossingFromBag(news, parts, basicFunctions, conditionalFunctions, false);
 	    
 	    // Itera sobre todo o vetor de partes, sorteia a chance de mutação e substitui o novo cromossomo sobre o antigo que sofre mutação
 	    for(int i=0; i <parts.length; i++){
@@ -592,7 +592,7 @@ public class Reproduction {
 //	    }
 	    
 	    // Retorna novo conjunto de scripts após o processo de mutação
-	    news = chossingFromBag(news,parts,basicFunctions,conditionalFunctions);
+	    news = chossingFromBag(news,parts,basicFunctions,conditionalFunctions, false);
 
 	    // Substitui a parte aleatória que vai sofrer a mutação para o novo cromossomo
 	    int partToMutate = rand.nextInt(parts.length);
@@ -639,7 +639,7 @@ public class Reproduction {
 		return cloneS;
 	}
 	
-	public String removeFromLast(String s){
+	public static String removeFromLast(String s){
 		String cloneS = s;
 		
 		// Retira fechamento de parênteses )
@@ -649,25 +649,26 @@ public class Reproduction {
 		return cloneS;
 	}
 	
-	public String removingTrashFromGrammar(String originalGrammar){
+	public static String removingTrashFromGrammar(String originalGrammar){
 		originalGrammar=originalGrammar.replace("NEW", "");		
 		return originalGrammar;
 	}
 	
-	public String replaceFromCompleteGrammar(String oldFunction, String newFunction, String originalGrammar){
+	public static String replaceFromCompleteGrammar(String oldFunction, String newFunction, String originalGrammar){
 		originalGrammar = originalGrammar.replace(oldFunction, newFunction+"NEW");
 		return originalGrammar;
 	}
 	
 	// Vetor de Strings do mesmo tamanho do parts, Vetor de Strings com cromossomo cortado e tratado, conjuntos de funções básicas e condicionais
-	public String[]  chossingFromBag(String[] candidates, String[] originals, List<FunctionsforGrammar>basicFunctions, List<FunctionsforGrammar>conditionalFunctions){
+	public static String[]  chossingFromBag(String[] candidates, String[] originals, List<FunctionsforGrammar>basicFunctions, List<FunctionsforGrammar>conditionalFunctions, boolean same){
 		// candidates = news
 		// originais = parts
 		ScriptsTable objScriptTable = new ScriptsTable("", "objScriptTable");
+		boolean m;
 		
 		boolean found=false;
 		for (int i = 0; i < originals.length; i++){
-			found=false;
+			found = false;
 			
 			// Itera sobre todas as funções do conjunto de funções básicas
 			for (FunctionsforGrammar function:basicFunctions){
@@ -677,7 +678,11 @@ public class Reproduction {
 					// Se o comando original estava dentro de um for
 					if(originals[i].contains(",u,") || originals[i].contains(",u)") || originals[i].contains("(u,")) {
 						// Forçar este m para o false pro TCC, usar a função que retorna um script com função equivalente ao original da interface
-						boolean m = rand.nextFloat() <= 0.5;
+						if(same)
+							m = false;
+						else
+							m = rand.nextFloat() <= 0.5;
+						
 						if(m){
 							// Retorna uma nova função básica totalmente aleatória, respeitando apenas a presença ou não do for u
 							candidates[i] = objScriptTable.returnBasicFunctionClean(true);
@@ -687,7 +692,12 @@ public class Reproduction {
 						}
 					// Se o comando original não estava dentro de um for
 					} else {
-						boolean m = rand.nextFloat() <= 0.5;
+						
+						if(same)
+							m = false;
+						else
+							m = rand.nextFloat() <= 0.5;
+						
 						if(m){
 							candidates[i]=objScriptTable.returnBasicFunctionClean(false);
 						} else {
@@ -708,7 +718,11 @@ public class Reproduction {
 						// Se o comando original estava dentro de um for
 						if(originals[i].contains(",u,") || originals[i].contains(",u)") || originals[i].contains("(u,")){
 							// Forçar este m para o false pro TCC, usar a função que retorna um script com função equivalente ao original da interface
-							boolean m = rand.nextFloat() <= 0.5;
+							if(same)
+								m = false;
+							else
+								m = rand.nextFloat() <= 0.5;
+							
 							if(m){
 								// Retorna uma nova função condicional totalmente aleatória, respeitando apenas a presença ou não do for u
 								candidates[i]=objScriptTable.returnConditionalClean(true);
@@ -718,7 +732,12 @@ public class Reproduction {
 							}
 						// Se o comando original não estava dentro de um for
 						} else {
-							boolean m = rand.nextFloat() <= 0.5;
+							
+							if(same)
+								m = false;
+							else
+								m = rand.nextFloat() <= 0.5;
+							
 							if(m) {
 								candidates[i]=objScriptTable.returnConditionalClean(false);
 							} else {
@@ -868,7 +887,7 @@ public class Reproduction {
 		
 	}
 	
-	public void addLineFile(String data) {
+	public static void addLineFile(String data) {
 	    try{    
 	
 	        File file =new File(pathTableScripts+"ScriptsTable.txt");    
