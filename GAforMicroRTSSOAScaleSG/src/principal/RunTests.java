@@ -3,6 +3,7 @@ package principal;
 import ga.model.Population;
 import ga.util.RunGA;
 import ga.util.Evaluation.RatePopulation;
+import ga.util.Evaluation.RatePopulations;
 import ga.util.Evaluation.RoundRobinEliteandSampleEval;
 import ga.util.Evaluation.RoundRobinEliteandSampleIterativeEval;
 import ga.util.Evaluation.RoundRobinEval;
@@ -47,7 +48,7 @@ public class RunTests {
 		//RatePopulation fEval = new RoundRobinSampleEval();
 		//RatePopulation fEval = new RoundRobinEliteandSampleEval();
 		//RatePopulation fEval = new RoundRobinIterativeEval();
-		RatePopulation fEval = new RoundRobinEliteandSampleIterativeEval();
+		RatePopulations fEval = new RoundRobinEliteandSampleIterativeEval();
 		
 		//rodamos o GA
 		Population popFinal = ga.run(fEval);

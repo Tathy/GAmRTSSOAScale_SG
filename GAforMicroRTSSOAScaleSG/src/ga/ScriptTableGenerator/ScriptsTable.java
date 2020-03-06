@@ -45,7 +45,6 @@ public class ScriptsTable {
 
 	private String pathTableScripts;
 	
-	//Tathy
 	private final String pathScriptFromInterface = System.getProperty("user.dir").concat("/Table/ScriptFromInterface.txt");
 	
 	public ScriptsTable(){
@@ -77,6 +76,10 @@ public class ScriptsTable {
 	public HashMap<String, BigDecimal> getScriptTable() {
 		return scriptsTable;
 	}
+	
+	public String getID() {
+		return this.id;
+	}
 
 
 	public void addScript(String chromosomeScript){
@@ -106,7 +109,7 @@ public class ScriptsTable {
 
 	public ScriptsTable generateScriptsTable(int size){
 		
-		// Script gerado com a interface é lido no arquivo e colocado no newChromosomes com key = 0
+		// Script gerado com a interface ï¿½ lido no arquivo e colocado no newChromosomes com key = 0
 		
 		HashMap<String, BigDecimal> newChromosomes = new HashMap<>();
 		String tChom;
@@ -120,27 +123,7 @@ public class ScriptsTable {
 				//int sizeCh=rand.nextInt(ConfigurationsGA.SIZE_CHROMOSOME_SCRIPT)+1;
 				int sizeCh=rand.nextInt(ConfigurationsGA.MAX_QTD_COMPONENTS)+1;
 				if(ConfigurationsGA.sketch){ // sketch = true
-					
-					if(i == 0) {
-						// Faz leitura do arquivo na primeira iteração para garantir a key = 0
-						tChom = "";
-						try {
-							BufferedReader br = new BufferedReader(new FileReader(pathScriptFromInterface));
-							while(br.ready()){
-								String linha = br.readLine();
-								//System.out.println("Script do arquivo: " + linha);
-								tChom = tChom + linha;
-							}
-							br.close();
-							tChom = tChom.substring(0, tChom.length()-1);
-						}catch(IOException ioe){
-							ioe.printStackTrace();
-						}
-						
-					} else {
-						tChom=buildScriptGenotypeSketch();
-					}
-
+					tChom=buildScriptGenotypeSketch();
 				} else {
 					tChom=buildScriptGenotype(sizeCh);
 				}
@@ -154,7 +137,7 @@ public class ScriptsTable {
 				}
 				*/
 
-				// Não aceita cromossomos repetidos
+				// Nï¿½o aceita cromossomos repetidos
 				if(!newChromosomes.containsKey(tChom)) {
 					newChromosomes.put(tChom, BigDecimal.valueOf(i));
 					f0.println(i+" "+tChom);
@@ -174,7 +157,7 @@ public class ScriptsTable {
 	
 public ScriptsTable generateScriptsTableMutation(int size){
 		
-		// Script gerado com a interface é lido no arquivo e colocado no newChromosomes com key = 0
+		// Script gerado com a interface Ã© lido no arquivo e colocado no newChromosomes com key = 0
 		
 		HashMap<String, BigDecimal> newChromosomes = new HashMap<>();
 		String tChom = null, tChom0 = null;
@@ -189,7 +172,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 				
 				if(ConfigurationsGA.sketch){ // sketch = true
 					if(i == 0) {
-						// Faz leitura do arquivo na primeira iteração para garantir a key = 0
+						// Faz leitura do arquivo na primeira iteraï¿½ï¿½o para garantir a key = 0
 						tChom0 = "";
 						try {
 							BufferedReader br = new BufferedReader(new FileReader(pathScriptFromInterface));
@@ -207,16 +190,13 @@ public ScriptsTable generateScriptsTableMutation(int size){
 						
 					} else {
 						tChom = buildScriptMutation(tChom0);
-						
-						System.out.println("Iteração = " + i + " size = " + size);
-						System.out.println("Novo script na mutação: " + tChom);
 					}
 
 				} else {
 					tChom=buildScriptGenotype(sizeCh);
 				}
 
-				// Não aceita cromossomos repetidos
+				// Nï¿½o aceita cromossomos repetidos
 				if(!newChromosomes.containsKey(tChom)) {
 					newChromosomes.put(tChom, BigDecimal.valueOf(i));
 					f2.println(i+" "+tChom);
@@ -231,7 +211,6 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		}		
 
 		ScriptsTable st = new ScriptsTable(newChromosomes, pathTableScripts, this.id);
-		System.out.println("Tabela preenchida com população inicial!");
 		return st;
 	}
 
@@ -584,7 +563,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		return forClausule;
 	}
 
-	// Retorna uma nova função básica totalmente aleatória, respeitando apenas a presenção ou não do for u
+	// Retorna uma nova funï¿½ï¿½o bï¿½sica totalmente aleatï¿½ria, respeitando apenas a presenï¿½ï¿½o ou nï¿½o do for u
 	public String returnBasicFunctionClean(Boolean forclausule){
 		String basicFunction = "";
 		int limitInferior;
@@ -593,7 +572,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		FunctionsforGrammar functionChosen;
 		//int id=rand.nextInt(ConfigurationsGA.QTD_RULES_BASIC_FUNCTIONS);
 		
-		// Sorteia nova função básica (com ou ser for u)
+		// Sorteia nova funï¿½ï¿½o bï¿½sica (com ou ser for u)
 		if(forclausule==false){
 			int idBasicActionSelected=rand.nextInt(functions.getBasicFunctionsForGrammar().size());
 			functionChosen = functions.getBasicFunctionsForGrammar().get(idBasicActionSelected);
@@ -604,12 +583,12 @@ public ScriptsTable generateScriptsTableMutation(int size){
 
 		basicFunction = basicFunction + functionChosen.getNameFunction()+"(";
 		
-		// Itera sobre todos os parâmetros da função sorteada
+		// Itera sobre todos os parï¿½metros da funï¿½ï¿½o sorteada
 		for(Parameter parameter:functionChosen.getParameters()){
-			// Adiciona u caso a função o tenha como parâmetro
+			// Adiciona u caso a funï¿½ï¿½o o tenha como parï¿½metro
 			if(parameter.getParameterName()=="u"){				
 				basicFunction = basicFunction + "u,";
-			// Adiciona parâmetro inteiro de acordo com seus limites inferior e superior
+			// Adiciona parï¿½metro inteiro de acordo com seus limites inferior e superior
 			} else if(parameter.getDiscreteSpecificValues() == null) {
 				limitInferior=(int)parameter.getInferiorLimit();
 				limitSuperior=(int)parameter.getSuperiorLimit();
@@ -623,7 +602,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 				
 				basicFunction=basicFunction+parametherValueChosen+",";
 			
-			// Os outros parâmetros são sorteados a partir de uma distribuição discreta equivalente a ele
+			// Os outros parï¿½metros sï¿½o sorteados a partir de uma distribuiï¿½ï¿½o discreta equivalente a ele
 			} else {
 				int idChosen = rand.nextInt(parameter.getDiscreteSpecificValues().size());
 				discreteValue = parameter.getDiscreteSpecificValues().get(idChosen);
@@ -637,7 +616,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		return basicFunction + ")";
 	}
 	
-	// Retorna uma nova função básica de acordo com a função antiga, trocando os parâmetros
+	// Retorna uma nova funï¿½ï¿½o bï¿½sica de acordo com a funï¿½ï¿½o antiga, trocando os parï¿½metros
 	public String returnBasicFunctionCleanSame(Boolean forclausule, String oldFunction){
 		
 		String basicFunction="";
@@ -648,7 +627,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		String parts[] = oldFunction.split("[\\W]");
 		List<Integer> parametersDiscrete = new ArrayList<Integer>();
 		
-		// Itera em cada parte da função antiga, procura parâmetros inteiros (de 0 a 9) e adiciona na lista de parêmtros discretos
+		// Itera em cada parte da funï¿½ï¿½o antiga, procura parï¿½metros inteiros (de 0 a 9) e adiciona na lista de parï¿½mtros discretos
 		for(String part: parts){
 			if(Pattern.compile( "[0-9]" ).matcher(part).find()){
 				parametersDiscrete.add(Integer.valueOf(part));
@@ -656,16 +635,16 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		}
 		
 		//int id=rand.nextInt(ConfigurationsGA.QTD_RULES_BASIC_FUNCTIONS);
-		// Escolhe função equivalente à original com ou sem for u
+		// Escolhe funï¿½ï¿½o equivalente ï¿½ original com ou sem for u
 		if(forclausule == false){
-			// Itera sobre toda a lista de funções básicas sem parâmetro u e escolhe a equivalente
+			// Itera sobre toda a lista de funï¿½ï¿½es bï¿½sicas sem parï¿½metro u e escolhe a equivalente
 			for(FunctionsforGrammar lis: functions.getBasicFunctionsForGrammar()){
 				if(oldFunction.startsWith(lis.getNameFunction())){
 					functionChosen=lis;
 				}
 			}
 		} else {
-			// Itera sobre toda a lista de funções básicas com parâmetro u e escolhe a equivalente
+			// Itera sobre toda a lista de funï¿½ï¿½es bï¿½sicas com parï¿½metro u e escolhe a equivalente
 			for(FunctionsforGrammar lis: functions.getBasicFunctionsForGrammarUnit()){
 				if(oldFunction.startsWith(lis.getNameFunction())){
 					functionChosen=lis;
@@ -675,49 +654,49 @@ public ScriptsTable generateScriptsTableMutation(int size){
 
 		basicFunction=basicFunction+functionChosen.getNameFunction()+"(";
 		
-		// Itera sobre todos os parâmetros da função escolhida
+		// Itera sobre todos os parï¿½metros da funï¿½ï¿½o escolhida
 		for(Parameter parameter:functionChosen.getParameters()){
-			// Adiciona u caso a função o tenha como parâmetro
+			// Adiciona u caso a funï¿½ï¿½o o tenha como parï¿½metro
 			if(parameter.getParameterName()=="u"){				
 				basicFunction=basicFunction+"u,";
-			// Adiciona parâmetro inteiro de acordo com seus limites inferior e superior
+			// Adiciona parï¿½metro inteiro de acordo com seus limites inferior e superior
 			}else if(parameter.getDiscreteSpecificValues() == null){
 				int currentValueParameter = parametersDiscrete.get(0);
 				parametersDiscrete.remove(0);
 				
-				// A tendência a ir para valores mais altos ou mais baixos é aleatória
+				// A tendï¿½ncia a ir para valores mais altos ou mais baixos ï¿½ aleatï¿½ria
 				boolean m = rand.nextFloat() <= 0.5;
 				limitInferior=(int)parameter.getInferiorLimit();
 				limitSuperior=(int)parameter.getSuperiorLimit();
 				
 				if(m){
 					
-					// Testa se o valor atual do parâmetro discreto + passo da mutação (delta) ultrapassa o limite superior
+					// Testa se o valor atual do parï¿½metro discreto + passo da mutaï¿½ï¿½o (delta) ultrapassa o limite superior
 					if(!(currentValueParameter + ConfigurationsGA.deltaForMutation >= limitSuperior)){
-						if(limitSuperior!=limitInferior){ // Dá o passo
+						if(limitSuperior!=limitInferior){ // Dï¿½ o passo
 							currentValueParameter = currentValueParameter + ConfigurationsGA.deltaForMutation;
-						} else {						  // Não dá o passo
+						} else {						  // Nï¿½o dï¿½ o passo
 							currentValueParameter = limitSuperior;
 						}
 						
-					// Testa se o valor atual do parâmetro discreto - passo da mutação (delta) ultrapassa o limite inferior
+					// Testa se o valor atual do parï¿½metro discreto - passo da mutaï¿½ï¿½o (delta) ultrapassa o limite inferior
 					}else if(!(currentValueParameter - ConfigurationsGA.deltaForMutation<=limitInferior)){
-						if(limitSuperior != limitInferior){ // Dá o passo
+						if(limitSuperior != limitInferior){ // Dï¿½ o passo
 							currentValueParameter = currentValueParameter - ConfigurationsGA.deltaForMutation;
-						} else { 							// Não dá o passo
+						} else { 							// Nï¿½o dï¿½ o passo
 							currentValueParameter=limitInferior;
 						}
 					}	
 					
 				} else {
-					// Testa se o valor atual do parâmetro discreto - passo da mutação (delta) ultrapassa o limite inferior
+					// Testa se o valor atual do parï¿½metro discreto - passo da mutaï¿½ï¿½o (delta) ultrapassa o limite inferior
 					if(!(currentValueParameter - ConfigurationsGA.deltaForMutation<=limitInferior)){
 						if(limitSuperior!=limitInferior){
 							currentValueParameter = currentValueParameter - ConfigurationsGA.deltaForMutation;
 						} else {
 							currentValueParameter=limitInferior;
 						}
-					// Testa se o valor atual do parâmetro discreto + passo da mutação (delta) ultrapassa o limite superior
+					// Testa se o valor atual do parï¿½metro discreto + passo da mutaï¿½ï¿½o (delta) ultrapassa o limite superior
 					} else if(!(currentValueParameter+ ConfigurationsGA.deltaForMutation>=limitSuperior)) {
 						if(limitSuperior!=limitInferior){
 							currentValueParameter = currentValueParameter + ConfigurationsGA.deltaForMutation;
@@ -728,7 +707,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 				}
 
 				basicFunction=basicFunction+currentValueParameter+",";
-			// Os outros parâmetros são sorteados a partir de uma distribuição discreta equivalente a ele
+			// Os outros parï¿½metros sï¿½o sorteados a partir de uma distribuiï¿½ï¿½o discreta equivalente a ele
 			} else {
 				int idChosen=rand.nextInt(parameter.getDiscreteSpecificValues().size());
 				discreteValue=parameter.getDiscreteSpecificValues().get(idChosen);
@@ -762,16 +741,16 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		conditional=conditional+functionChosen.getNameFunction()+"(";
 		
 		for(Parameter parameter:functionChosen.getParameters()) {
-			// Coloca o u caso este seja o parâmetro atual
+			// Coloca o u caso este seja o parï¿½metro atual
 			if(parameter.getParameterName()=="u"){
 				conditional=conditional+"u,";
-			// Adiciona parâmetro inteiro de acordo com seus limites inferior e superior
+			// Adiciona parï¿½metro inteiro de acordo com seus limites inferior e superior
 			} else if(parameter.getDiscreteSpecificValues()==null){
 				limitInferior=(int)parameter.getInferiorLimit();
 				limitSuperior=(int)parameter.getSuperiorLimit();
 				int parametherValueChosen = rand.nextInt(limitSuperior-limitInferior) + limitInferior;
 				conditional=conditional+parametherValueChosen+",";
-			// Os outros parâmetros são sorteados a partir de uma distribuição discreta equivalente a ele
+			// Os outros parï¿½metros sï¿½o sorteados a partir de uma distribuiï¿½ï¿½o discreta equivalente a ele
 			} else {
 				int idChosen = rand.nextInt(parameter.getDiscreteSpecificValues().size());
 				discreteValue=parameter.getDiscreteSpecificValues().get(idChosen);
@@ -793,7 +772,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		String parts[]=oldFunction.split("[\\W]");
 		List<Integer> parametersDiscrete=new ArrayList<Integer>();
 		
-		// Itera em cada parte da função antiga, procura parâmetros inteiros (de 0 a 9) e adiciona na lista de parêmtros discretos
+		// Itera em cada parte da funï¿½ï¿½o antiga, procura parï¿½metros inteiros (de 0 a 9) e adiciona na lista de parï¿½mtros discretos
 		for(String part: parts){
 			if(Pattern.compile( "[0-9]" ).matcher(part).find()){
 					parametersDiscrete.add(Integer.valueOf(part));
@@ -801,16 +780,16 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		}
 		
 		//int id=rand.nextInt(ConfigurationsGA.QTD_RULES_BASIC_FUNCTIONS);
-		// Escolhe função equivalente à original com ou sem for u
+		// Escolhe funï¿½ï¿½o equivalente ï¿½ original com ou sem for u
 		if(forClausule==false){
-			// Itera sobre toda a lista de funções condicionais sem o u e escolhe uma equivalente
+			// Itera sobre toda a lista de funï¿½ï¿½es condicionais sem o u e escolhe uma equivalente
 			for(FunctionsforGrammar lis: functions.getConditionalsForGrammar()){
 				if(oldFunction.startsWith(lis.getNameFunction())){
 					functionChosen=lis;
 				}
 			}
 		} else {
-			// Itera sobre toda a lista de funções condicionais com o u e escolhe uma equivalente
+			// Itera sobre toda a lista de funï¿½ï¿½es condicionais com o u e escolhe uma equivalente
 			for(FunctionsforGrammar lis: functions.getConditionalsForGrammarUnit()){
 				if(oldFunction.startsWith(lis.getNameFunction())){
 					functionChosen=lis;
@@ -820,50 +799,50 @@ public ScriptsTable generateScriptsTableMutation(int size){
 
 		conditional=conditional+functionChosen.getNameFunction()+"(";
 		
-		// Itera sobre todos os parâmetros da função escolhida
+		// Itera sobre todos os parï¿½metros da funï¿½ï¿½o escolhida
 		for(Parameter parameter:functionChosen.getParameters()){
-			// Adiciona u caso a função o tenha como parâmetro
+			// Adiciona u caso a funï¿½ï¿½o o tenha como parï¿½metro
 			if(parameter.getParameterName()=="u"){				
 				conditional=conditional+"u,";
-			// Adiciona parâmetro inteiro de acordo com seus limites inferior e superior
+			// Adiciona parï¿½metro inteiro de acordo com seus limites inferior e superior
 			}else if(parameter.getDiscreteSpecificValues() == null){
 				int currentValueParameter=parametersDiscrete.get(0);
 				parametersDiscrete.remove(0);
 				
-				// A tendência a ir para valores mais altos ou mais baixos é aleatória
+				// A tendï¿½ncia a ir para valores mais altos ou mais baixos ï¿½ aleatï¿½ria
 				boolean m = rand.nextFloat() <= 0.5;
 				limitInferior = (int)parameter.getInferiorLimit();
 				limitSuperior = (int)parameter.getSuperiorLimit();
 				
 				if(m){
 					
-					// Testa se o valor atual do parâmetro discreto + passo da mutação (delta) ultrapassa o limite superior
+					// Testa se o valor atual do parï¿½metro discreto + passo da mutaï¿½ï¿½o (delta) ultrapassa o limite superior
 					if(!(currentValueParameter + ConfigurationsGA.deltaForMutation >= limitSuperior)){
-						if(limitSuperior!=limitInferior){ // Dá o passo
+						if(limitSuperior!=limitInferior){ // Dï¿½ o passo
 							currentValueParameter = currentValueParameter + ConfigurationsGA.deltaForMutation;
-						} else {						  // Não dá o passo
+						} else {						  // Nï¿½o dï¿½ o passo
 							currentValueParameter = limitSuperior;
 						}
 						
-					// Testa se o valor atual do parâmetro discreto - passo da mutação (delta) ultrapassa o limite inferior
+					// Testa se o valor atual do parï¿½metro discreto - passo da mutaï¿½ï¿½o (delta) ultrapassa o limite inferior
 					}else if(!(currentValueParameter - ConfigurationsGA.deltaForMutation<=limitInferior)){
-						if(limitSuperior != limitInferior){ // Dá o passo
+						if(limitSuperior != limitInferior){ // Dï¿½ o passo
 							currentValueParameter = currentValueParameter - ConfigurationsGA.deltaForMutation;
-						} else { 							// Não dá o passo
+						} else { 							// Nï¿½o dï¿½ o passo
 							currentValueParameter=limitInferior;
 						}
 					}	
 					
 				} else {
 					
-					// Testa se o valor atual do parâmetro discreto - passo da mutação (delta) ultrapassa o limite inferior
+					// Testa se o valor atual do parï¿½metro discreto - passo da mutaï¿½ï¿½o (delta) ultrapassa o limite inferior
 					if(!(currentValueParameter - ConfigurationsGA.deltaForMutation<=limitInferior)){
 						if(limitSuperior!=limitInferior){
 							currentValueParameter = currentValueParameter - ConfigurationsGA.deltaForMutation;
 						} else {
 							currentValueParameter=limitInferior;
 						}
-					// Testa se o valor atual do parâmetro discreto + passo da mutação (delta) ultrapassa o limite superior
+					// Testa se o valor atual do parï¿½metro discreto + passo da mutaï¿½ï¿½o (delta) ultrapassa o limite superior
 					} else if(!(currentValueParameter+ ConfigurationsGA.deltaForMutation>=limitSuperior)) {
 						if(limitSuperior!=limitInferior){
 							currentValueParameter = currentValueParameter + ConfigurationsGA.deltaForMutation;
@@ -875,7 +854,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 
 				conditional=conditional+currentValueParameter+",";
 				
-			// Os outros parâmetros são sorteados a partir de uma distribuição discreta equivalente a ele
+			// Os outros parï¿½metros sï¿½o sorteados a partir de uma distribuiï¿½ï¿½o discreta equivalente a ele
 			} else {
 				int idChosen=rand.nextInt(parameter.getDiscreteSpecificValues().size());
 				discreteValue=parameter.getDiscreteSpecificValues().get(idChosen);
@@ -989,7 +968,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 	//	}
 	
 	public String buildScriptMutation(String tChom){
-		// Lista as funções básicas e condicionais
+		// Lista as funï¿½ï¿½es bï¿½sicas e condicionais
 		functions=new FunctionsforGrammar();
 		List<FunctionsforGrammar> basicFunctions = functions.getBasicFunctionsForGrammar();
 		List<FunctionsforGrammar> conditionalFunctions = functions.getConditionalsForGrammar();
@@ -1006,19 +985,19 @@ public ScriptsTable generateScriptsTableMutation(int size){
 	       
 	    // Itera sobre todas as partes e faz tratamento de strings
 	    for(int i = 0; i < parts.length; i++) {
-	    	// Retira ifs e parênteses do começo
+	    	// Retira ifs e parï¿½nteses do comeï¿½o
 		    //parts[i] = removeFromBeggining(parts[i]);
 		    parts[i] = Reproduction.removeFromBeggining(parts[i]);
-		    // Retira parênteses do final
+		    // Retira parï¿½nteses do final
 		    //parts[i] = removeFromLast(parts[i]);
 		    parts[i] = Reproduction.removeFromLast(parts[i]);
 	    }
 	    
-	    // Retorna novo conjunto de scripts após o processo de mutação
+	    // Retorna novo conjunto de scripts apï¿½s o processo de mutaï¿½ï¿½o
 	    //news = chossingFromBag(news, parts, basicFunctions, conditionalFunctions);
 	    news = Reproduction.chossingFromBag(news, parts, basicFunctions, conditionalFunctions, true);
 	    
-	    // Itera sobre todo o vetor de partes, sorteia a chance de mutação e substitui o novo cromossomo sobre o antigo que sofre mutação
+	    // Itera sobre todo o vetor de partes, sorteia a chance de mutaï¿½ï¿½o e substitui o novo cromossomo sobre o antigo que sofre mutaï¿½ï¿½o
 	    for(int i=0; i <parts.length; i++){
 	    	double mutatePercent = ConfigurationsGA.MUTATION_RATE_RULE;
 	    	boolean m = rand.nextFloat() <= mutatePercent;
@@ -1028,18 +1007,18 @@ public ScriptsTable generateScriptsTableMutation(int size){
 	    		//tChom = replaceFromCompleteGrammar(parts[i], news[i], tChom );
 	    }
 	    
-	    // Caso o novo cromossomo gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
+	    // Caso o novo cromossomo gerado jï¿½ tenha um equivalente na scrTable, o ID usado serï¿½ o mesmo do jï¿½ existente
 	    tChom = Reproduction.removingTrashFromGrammar(tChom);
 		if(scriptsTable.containsKey(tChom)){
 			return tChom;			
 		} else {
-			// Caso o novo cromossomo gerado não tenha equivalente na scrTable, ele é adicionado no final, com ID = tamanho atual da tabela de scripts
+			// Caso o novo cromossomo gerado nï¿½o tenha equivalente na scrTable, ele ï¿½ adicionado no final, com ID = tamanho atual da tabela de scripts
 			//System.out.println("beforeMutateScript "+cromScriptOriginal);
 			//System.out.println("afterMutateScript "+cromScript);
 			int newId = scriptsTable.size();
 			scriptsTable.put(tChom, BigDecimal.valueOf(newId));
 			setCurrentSizeTable(scriptsTable.size());
-			Reproduction.addLineFile(newId + " " + tChom);
+			Reproduction.addLineFile(newId + " " + tChom, id);
 			return tChom;
 		}
 		
@@ -1051,12 +1030,12 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		String cloneS = s;
 		  
 		try {
-			// Retira abre parênteses (
+			// Retira abre parï¿½nteses (
 			while (cloneS.charAt(0)=='(' ){
 				cloneS=cloneS.replaceFirst("\\(", "");
 			}
 		
-			// Retira ifs e parênteses
+			// Retira ifs e parï¿½nteses
 			if(cloneS.startsWith("if")){
 				cloneS=cloneS.replaceFirst("if", "");
 				if(cloneS.charAt(0)=='('){
@@ -1075,7 +1054,7 @@ public ScriptsTable generateScriptsTableMutation(int size){
 	public String removeFromLast(String s){
 		String cloneS = s;
 		
-		// Retira fechamento de parênteses )
+		// Retira fechamento de parï¿½nteses )
 		while (cloneS.endsWith("))")) {
 			cloneS=cloneS.replaceFirst("\\)", "");
 		}
@@ -1089,25 +1068,25 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		for (int i = 0; i < parts.length; i++){
 			found = false;
 			
-			// Itera sobre todas as funções do conjunto de funções básicas
+			// Itera sobre todas as funï¿½ï¿½es do conjunto de funï¿½ï¿½es bï¿½sicas
 			for (FunctionsforGrammar function:basicFunctions){
 				
 				if(parts[i].startsWith(function.getNameFunction())){
 					//change with other basicFunction
 					// Se o comando original estava dentro de um for
 					if(parts[i].contains(",u,") || parts[i].contains(",u)") || parts[i].contains("(u,")) {
-						// Forçar este m para o false pro TCC, usar a função que retorna um script com função equivalente ao original da interface
+						// Forï¿½ar este m para o false pro TCC, usar a funï¿½ï¿½o que retorna um script com funï¿½ï¿½o equivalente ao original da interface
 						boolean m = rand.nextFloat() <= 0.5;
 						// VALOR DO M VERIFICAR
 						m = false;
 						if(m){
-							// Retorna uma nova função básica totalmente aleatória, respeitando apenas a presença ou não do for u
+							// Retorna uma nova funï¿½ï¿½o bï¿½sica totalmente aleatï¿½ria, respeitando apenas a presenï¿½a ou nï¿½o do for u
 							news[i] = objScriptTable.returnBasicFunctionClean(true);
 						} else {
-							// Retorna uma nova função básica de acordo com a função antiga, trocando os parâmetros
+							// Retorna uma nova funï¿½ï¿½o bï¿½sica de acordo com a funï¿½ï¿½o antiga, trocando os parï¿½metros
 							news[i]=objScriptTable.returnBasicFunctionCleanSame(true, parts[i]);
 						}
-					// Se o comando original não estava dentro de um for
+					// Se o comando original nï¿½o estava dentro de um for
 					} else {
 						boolean m = rand.nextFloat() <= 0.5;
 						// VALOR DO M VERIFICAR
@@ -1131,18 +1110,18 @@ public ScriptsTable generateScriptsTableMutation(int size){
 						//change with other basicFunction
 						// Se o comando original estava dentro de um for
 						if(parts[i].contains(",u,") || parts[i].contains(",u)") || parts[i].contains("(u,")){
-							// Forçar este m para o false pro TCC, usar a função que retorna um script com função equivalente ao original da interface
+							// Forï¿½ar este m para o false pro TCC, usar a funï¿½ï¿½o que retorna um script com funï¿½ï¿½o equivalente ao original da interface
 							boolean m = rand.nextFloat() <= 0.5;
 							// VALOR DO M VERIFICAR
 							m = false;
 							if(m){
-								// Retorna uma nova função condicional totalmente aleatória, respeitando apenas a presença ou não do for u
+								// Retorna uma nova funï¿½ï¿½o condicional totalmente aleatï¿½ria, respeitando apenas a presenï¿½a ou nï¿½o do for u
 								news[i]=objScriptTable.returnConditionalClean(true);
 							} else {
-								// Retorna uma nova função básica de acordo com a função antiga, trocando os parâmetros
+								// Retorna uma nova funï¿½ï¿½o bï¿½sica de acordo com a funï¿½ï¿½o antiga, trocando os parï¿½metros
 								news[i]=objScriptTable.returnConditionalCleanSame(true, parts[i]);
 							}
-						// Se o comando original não estava dentro de um for
+						// Se o comando original nï¿½o estava dentro de um for
 						} else {
 							boolean m = rand.nextFloat() <= 0.5;
 							// VALOR DO M VERIFICAR

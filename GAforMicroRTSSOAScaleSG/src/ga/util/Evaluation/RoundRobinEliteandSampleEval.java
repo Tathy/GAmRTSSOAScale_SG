@@ -106,7 +106,7 @@ public class RoundRobinEliteandSampleEval implements RatePopulation {
     }
 
     private void updateChromo(Population pop, String IAWinner, BigDecimal value) {
-        // buscar na população a IA compatível.
+        // buscar na populaï¿½ï¿½o a IA compatï¿½vel.
                 Chromosome chrUpdate = null;
                 for (Chromosome ch : pop.getChromosomes().keySet()) {
                     if (convertBasicTuple(ch).equals(IAWinner)) {

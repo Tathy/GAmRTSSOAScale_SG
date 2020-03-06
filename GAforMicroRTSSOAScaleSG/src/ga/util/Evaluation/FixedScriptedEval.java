@@ -50,6 +50,7 @@ public class FixedScriptedEval implements RatePopulation {
 		population.clearValueChromosomes();
 
 		// run the matches
+		// montar a lista de batalhas que ir�o ocorrer
 		runBattles(population);
 
 		// Just will continue if all files were processed
@@ -167,7 +168,7 @@ public class FixedScriptedEval implements RatePopulation {
 
 	private void runBattles(Population population) {
 		int numberSOA = 1;
-		// montar a lista de batalhas que irão ocorrer
+		// montar a lista de batalhas que ir�o ocorrer
 
 		for (int i = 0; i < TOTAL_PARTIDAS_ROUND; i++) {
 
@@ -188,7 +189,7 @@ public class FixedScriptedEval implements RatePopulation {
 						e.printStackTrace();
 					}
 				}
-				// escreve a configuração de teste
+				// escreve a configura��o de teste
 				try {
 					FileWriter arq = new FileWriter(arqConfig, false);
 					PrintWriter gravarArq = new PrintWriter(arq);

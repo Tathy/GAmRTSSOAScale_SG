@@ -31,8 +31,9 @@ import ga.util.PreSelection;
 import model.EvalResult;
 import rts.units.UnitTypeTable;
 import util.LeitorLog;
+import util.LeitorLogID;
 
-public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
+public class RoundRobinEliteandSampleIterativeEval implements RatePopulations {
 	// CONSTANTES
 	private static final int TOTAL_PARTIDAS_ROUND = 1;
 	private static final int BATCH_SIZE = 1;
@@ -47,7 +48,7 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 	
 	private static final String pathTableScripts = System.getProperty("user.dir").concat("/Table/");
 
-	// Classes de informação
+	// Classes de informaÃ§Ã£o
 	private int atualGeneration = 0;
 
 	// Atributos locais
@@ -56,7 +57,8 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 
 	ArrayList<Chromosome> ChromosomeSample = new ArrayList<>();
 	
-	private HashMap<BigDecimal, String> scriptsTable;
+	private HashMap<BigDecimal, String> scriptsTable1;
+	private HashMap<BigDecimal, String> scriptsTable2;
 	int maxLinesLogsGrammar=100000;
 	int counterLinesLogsGrammar=0;
 
@@ -65,43 +67,56 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 	}
 
 	@Override
-	public Population evalPopulation(Population population, int generation, ScriptsTable scriptsTable) {
+	public Population evalPopulation(Population population1, Population population2, int generation, ScriptsTable scriptsTable1, ScriptsTable scriptsTable2, String id1, String id2) {
 		//recordMarkNewGeneration();
-		buildScriptsTable();
+		// Constroi tabela com scripts e seus IDs, lê o arquivo com ID da scriptsTable
+		buildScriptsTable(id1);
+		
+		// A geração atual é atualizada em cada iteração do RunGA
 		this.atualGeneration = generation;
+		
 		SOA_Folders.clear();
-		// limpa os valores existentes na population
-		population.clearValueChromosomes();
+		// Zera os valores das avaliações dos Chromossomos.
+		population1.clearValueChromosomes();
+		population2.clearValueChromosomes();
 
-		// executa os confrontos
-		runBattles(population);
+		// executa os confrontos (avalia a primeira)
+		runBattles(population1, population2, id1, id2);
+		//runBattles(population2, population1, id2, id1);
 
 		// Só permite continuar a execução após terminar os JOBS.
 		//controllExecute();
-		iterativeControll(population);
+		iterativeControll(population1, id1);
+		//iterativeControll(population2, id2);
 
 		// remove qualquer aquivo que não possua um vencedor
-		removeLogsEmpty();
+		removeLogsEmpty(id1);
+		//removeLogsEmpty(id2);
 
 		// ler resultados
-		ArrayList<EvalResult> resultados = lerResultados();
+		ArrayList<EvalResult> resultados1 = lerResultados(id1);
+		//ArrayList<EvalResult> resultados2 = lerResultados(id2);
 		
 		// atualizar valores das populacoes
-		if(resultados.size() > 0){
-			
-			updatePopulationValue(resultados, population);
+		if(resultados1.size() > 0){
+			updatePopulationValue(resultados1, population1, id1);
 		}
+		//if(resultados2.size() > 0){
+		//	updatePopulationValue(resultados2, population2, id2);
+		//}
 
-		return population;
+		return population1;
 	}
 	
-    public HashMap<BigDecimal, String> buildScriptsTable() {
-        scriptsTable = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(pathTableScripts + "/ScriptsTable.txt"))) {
+    public HashMap<BigDecimal, String> buildScriptsTable(String scrTableID) {
+    	HashMap<BigDecimal, String> scriptsTable = new HashMap<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(pathTableScripts + "/ScriptsTable" + scrTableID + ".txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
+            	// script
                 String code = line.substring(line.indexOf(" "), line.length());
                 String[] strArray = line.split(" ");
+                // id do script
                 int idScript = Integer.decode(strArray[0]);
                 scriptsTable.put(BigDecimal.valueOf(idScript), code);
             }
@@ -112,31 +127,39 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        if(scrTableID == "1") {
+        	scriptsTable1.clear();
+        	scriptsTable1 = scriptsTable;
+        } else {
+        	scriptsTable2.clear();
+        	scriptsTable2 = scriptsTable;
+        }
 
         return scriptsTable;
     }
 
-	private void removeLogsEmpty() {
-		LeitorLog log = new LeitorLog();
+	private void removeLogsEmpty(String id) {
+		LeitorLogID log = new LeitorLogID(id);
 		log.removeNoResults();
 	}
 
-	public Population updatePopulationValue(ArrayList<EvalResult> results, Population pop) {
+	public Population updatePopulationValue(ArrayList<EvalResult> results, Population pop, String id) {
 		//ArrayList<EvalResult> resultsNoDraw = removeDraw(results);
 		ArrayList<EvalResult> resultsNoDraw = results;
 		/*
-		 * System.out.println("Avaliações sem Draw"); for (EvalResult evalResult
+		 * System.out.println("AvaliaÃ§Ãµes sem Draw"); for (EvalResult evalResult
 		 * : resultsNoDraw) { evalResult.print(); }
 		 */
 		
 		for (EvalResult evalResult : resultsNoDraw) {
-			updateChomoPopulation(evalResult, pop);
+			updateChomoPopulation(evalResult, pop, id);
 		}
 
 		return pop;
 	}
 
-	private void updateChomoPopulation(EvalResult evalResult, Population pop) {
+	private void updateChomoPopulation(EvalResult evalResult, Population pop, String id) {
 		
 		if (evalResult.getEvaluation() == 0) {
             //IAWinner = evalResult.getIA1();
@@ -150,10 +173,10 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 		
 		if(counterLinesLogsGrammar<maxLinesLogsGrammar)
 		{
-			String portfolioGrammar0=buildCompleteGrammar(convertBasicTupleToInteger(evalResult.getIA1()));
+			String portfolioGrammar0=buildCompleteGrammar(convertBasicTupleToInteger(evalResult.getIA1()), id);
 			//System.out.println("portfolio0 "+portfolioGrammar0);
 	     
-			String portfolioGrammar1=buildCompleteGrammar(convertBasicTupleToInteger(evalResult.getIA2()));
+			String portfolioGrammar1=buildCompleteGrammar(convertBasicTupleToInteger(evalResult.getIA2()), id);
 			//System.out.println("portfolio1 "+portfolioGrammar1);
 	     
 			counterLinesLogsGrammar++;
@@ -192,12 +215,18 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 		
 	}
 	
-    public String buildCompleteGrammar(ArrayList<Integer> iScripts) {
+    public String buildCompleteGrammar(ArrayList<Integer> iScripts, String id) {
         List<AI> scriptsAI = new ArrayList<>();
         String portfolioGrammar="";
 
-        for (Integer idSc : iScripts) {
-        	portfolioGrammar=portfolioGrammar+scriptsTable.get(BigDecimal.valueOf(idSc))+";";
+        if(id == "1") {
+	        for (Integer idSc : iScripts) {
+	        	portfolioGrammar=portfolioGrammar+scriptsTable1.get(BigDecimal.valueOf(idSc))+";";
+	        }
+        } else {
+        	for (Integer idSc : iScripts) {
+	        	portfolioGrammar=portfolioGrammar+scriptsTable2.get(BigDecimal.valueOf(idSc))+";";
+	        }
         }
 
         return portfolioGrammar;
@@ -235,8 +264,8 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 		return rTemp;
 	}
 
-	public ArrayList<EvalResult> lerResultados() {
-		LeitorLog leitor = new LeitorLog();
+	public ArrayList<EvalResult> lerResultados(String id) {
+		LeitorLogID leitor = new LeitorLogID(id);
 		ArrayList<EvalResult> resultados = leitor.processar();
 		/*
 		 * for (EvalResult evalResult : resultados) { evalResult.print(); }
@@ -245,7 +274,7 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 	}
 
 	
-	private Population iterativeControll(Population population) {
+	private Population iterativeControll(Population population, String id) {
 		// look for clients and share the data.
 		while (hasSOACentralFile()) {
 			// update the quantity of SOA Clients.
@@ -256,7 +285,7 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 			shareFiles();
 
 			// run iterative process
-			population = iterativeEvaluation(population);
+			population = iterativeEvaluation(population, id);
 			
 			try {
 				Thread.sleep(200);
@@ -269,7 +298,7 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 		while (hasSOAArq()) {
 			try {
 				// run iterative process
-				population = iterativeEvaluation(population);
+				population = iterativeEvaluation(population, id);
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -280,20 +309,20 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 	}
 	
 	
-	private Population iterativeEvaluation(Population population) {
+	private Population iterativeEvaluation(Population population, String id) {
 		// ler resultados
-		ArrayList<EvalResult> resultados = lerResultadosIterative();
+		ArrayList<EvalResult> resultados = lerResultadosIterative(id);
 		
 		// atualizar valores das populacoes
 		if(resultados.size() > 0 ){
-			 population = updatePopulationValue(resultados, population);
+			 population = updatePopulationValue(resultados, population, id);
 		}
 		
 		return population;
 	}
 	
-	public ArrayList<EvalResult> lerResultadosIterative() {
-		LeitorLog leitor = new LeitorLog();
+	public ArrayList<EvalResult> lerResultadosIterative(String id) {
+		LeitorLogID leitor = new LeitorLogID(id);
 		ArrayList<EvalResult> resultados = leitor.processarIterative();
 		/*
 		 * for (EvalResult evalResult : resultados) { evalResult.print(); }
@@ -302,7 +331,7 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 	}
 	
 	/**
-	 * Verifica se os jobs já foram encerrados no cluster.
+	 * Verifica se os jobs jÃ¡ foram encerrados no cluster.
 	 */
 	private void controllExecute() {
 
@@ -380,7 +409,7 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 	}
 
 	/**
-	 * irá verificar se todas as pastas SOA estão vazias
+	 * irÃ¡ verificar se todas as pastas SOA estÃ£o vazias
 	 * 
 	 * @return True se estiver vazias
 	 */
@@ -409,7 +438,7 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 	}
 
 	/**
-	 * Irá verificar a pasta central não tem mais arquivos.
+	 * IrÃ¡ verificar a pasta central nÃ£o tem mais arquivos.
 	 * 
 	 * @return
 	 */
@@ -422,32 +451,35 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 	}
 
 	/**
-	 * Metódo para enviar todas as batalhas ao cluster.
+	 * MetÃ³do para enviar todas as batalhas ao cluster.
 	 * 
 	 * @param population
-	 *            Que contém as configuracoes para a IA
+	 *            Que contÃ©m as configuracoes para a IA
 	 */
-	private void runBattles(Population population) {
+	private void runBattles(Population population1, Population population2, String id1, String id2) {
 		int numberSOA = 1;
+		String ordemTablesFirst = id1 + "_" + id2;
+		String ordemTablesSecond = id2 + "_" + id1;
 		// montar a lista de batalhas que irão ocorrer
 		
 		
-		defineChromosomeSample(population);
-		defineRandomSet(population);
+		//defineChromosomeSample(population);
+		//defineRandomSet(population);
 
 		for (int i = 0; i < TOTAL_PARTIDAS_ROUND; i++) {
 
-			for (Chromosome cIA1 : population.getChromosomes().keySet()) {
-				
+			for (Chromosome cIA1 : population1.getChromosomes().keySet()) {
 
-				for (Chromosome cIA2 : this.ChromosomeSample) {
+				//for (Chromosome cIA2 : this.ChromosomeSample) {
+				for (Chromosome cIA2 : population2.getChromosomes().keySet()) {
 
 					//if (!cIA1.equals(cIA2)) {
 						// System.out.println("IA1 = "+ convertTuple(cIA1)+ "
 						// IA2 = "+ convertTuple(cIA2));
 
 						// first position
-						String strConfig = pathCentral + "/" + convertBasicTuple(cIA1) + "#(" + convertBasicTuple(cIA2)
+						// Ordem das Script Tables no começo do nome do arquivo
+						String strConfig = pathCentral + "/" + ordemTablesFirst + "#" + convertBasicTuple(cIA1) + "#(" + convertBasicTuple(cIA2)
 								+ ")#" + i + "#" + atualGeneration + ".txt";
 						File arqConfig = new File(strConfig);
 						if (!arqConfig.exists()) {
@@ -462,8 +494,9 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 						try {
 							FileWriter arq = new FileWriter(arqConfig, false);
 							PrintWriter gravarArq = new PrintWriter(arq);
-
-							gravarArq.println(convertBasicTuple(cIA1) + "#(" + convertBasicTuple(cIA2) + ")#" + i + "#"
+							
+							// Ordem das Scripts Tables dentro do arquivo
+							gravarArq.println(ordemTablesFirst + "#" + convertBasicTuple(cIA1) + "#(" + convertBasicTuple(cIA2) + ")#" + i + "#"
 									+ atualGeneration);
 
 							gravarArq.flush();
@@ -475,7 +508,7 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 						}
 
 						// second position
-						strConfig = pathCentral + "/(" + convertBasicTuple(cIA2) + ")#" + convertBasicTuple(cIA1) + "#"
+						strConfig = pathCentral + "/" + ordemTablesSecond + "#" + "(" + convertBasicTuple(cIA2) + ")#" + convertBasicTuple(cIA1) + "#"
 								+ i + "#" + atualGeneration + ".txt";
 						arqConfig = new File(strConfig);
 						if (!arqConfig.exists()) {
@@ -489,7 +522,7 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 							FileWriter arq = new FileWriter(arqConfig, false);
 							PrintWriter gravarArq = new PrintWriter(arq);
 
-							gravarArq.println("(" + convertBasicTuple(cIA2) + ")#" + convertBasicTuple(cIA1) + "#" + i
+							gravarArq.println(ordemTablesSecond + "#" + "(" + convertBasicTuple(cIA2) + ")#" + convertBasicTuple(cIA1) + "#" + i
 									+ "#" + atualGeneration);
 
 							gravarArq.flush();
@@ -529,18 +562,17 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulation {
 	}
 
 	private void defineChromosomeSample(Population population) {
-		
 		this.ChromosomeSample.clear();
-		PreSelection ps=new PreSelection(population);	
-		HashMap<Chromosome, BigDecimal> elite=(HashMap<Chromosome, BigDecimal>)ps.sortByValue(population.getChromosomes());
+		
+		PreSelection ps = new PreSelection(population);	
+		HashMap<Chromosome, BigDecimal> elite = (HashMap<Chromosome, BigDecimal>)ps.sortByValue(population.getChromosomes());
+		
 		ArrayList<Entry<Chromosome, BigDecimal>> arrayElite = new ArrayList<>();
 		arrayElite.addAll(elite.entrySet());
 		
 		HashSet<Chromosome> eliteH = new HashSet<>();
-		for(int i=0;i<arrayElite.size();i++)
-		{
+		for(int i = 0; i < arrayElite.size(); i++) {
 			eliteH.add(arrayElite.get(i).getKey());
-
 		}
 		
 		this.ChromosomeSample.addAll(eliteH);

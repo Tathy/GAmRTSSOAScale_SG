@@ -17,35 +17,43 @@ import ga.model.Population;
 
 public class PreSelection {
 
-	Population p;
+	Population population;
 	
 	public PreSelection(Population p){
-		this.p=p;
+		this.population=p;
 	}
 	
-	public List<Map.Entry<Chromosome, BigDecimal>> Tournament(){
+	public List<Map.Entry<Chromosome, BigDecimal>> Tournament(String id){
 		//we want to select some parents (list parents) from all the population (listCandidates)
-		// Controle de pais adicionados para seleção, lista de pais, lista de candidatos com população passada no construtor da classe (populacaoInicial)
-		int parentsAdded=0;
+		// Controle de pais adicionados para seleÃ§Ã£o, lista de pais, lista de candidatos com populÃ§Ã£o passada no construtor da classe (populacaoInicial)
+		int parentsAdded=0, size_parentsForCrossover, k_tournment;
 		List<Map.Entry<Chromosome, BigDecimal>> listParents= new ArrayList();
-		List<Map.Entry<Chromosome, BigDecimal>> listCandidates = new ArrayList<Map.Entry<Chromosome, BigDecimal>>(p.getChromosomes().entrySet());
+		List<Map.Entry<Chromosome, BigDecimal>> listCandidates = new ArrayList<Map.Entry<Chromosome, BigDecimal>>(population.getChromosomes().entrySet());
 		
-		while(parentsAdded < ConfigurationsGA.SIZE_PARENTSFORCROSSOVER) { // SIZE_PARENTSFORCROSSOVER = 40 (vai mudar na próxima etapa do TCC)
+		if(id == "1") {
+			size_parentsForCrossover = ConfigurationsGA.SIZE_PARENTSFORCROSSOVER;
+			k_tournment = ConfigurationsGA.K_TOURNMENT;
+		} else {
+			size_parentsForCrossover = ConfigurationsGA.SIZE_PARENTSFORCROSSOVER_2;
+			k_tournment = ConfigurationsGA.K_TOURNMENT_2;
+		}
+		
+		while(parentsAdded < size_parentsForCrossover) {
 			//here we randomize the list in order to select k random elements for the tournament
 			// Embaralha itens da lista de candidatos
 			Collections.shuffle(listCandidates);
 			
-			// Melhor indivíduo do torneio
+			// Melhor indivÃ­duo do torneio
 			Map.Entry<Chromosome, BigDecimal> best = null;
 
-			// Compara K_TOURNMENT aleatórios (primeiros da lista embaralhada) e escolhe o que obteve melhor resultado nas avaliações anteriores
-			for(int i=0; i < ConfigurationsGA.K_TOURNMENT; i++) { // K_TOURNMENT = 25 (vai mudar na próxima etapa do TCC)
+			// Compara K_TOURNMENT aleatÃ³rios (primeiros da lista embaralhada) e escolhe o que obteve melhor resultado nas avaliaï¿½ï¿½es anteriores
+			for(int i=0; i < k_tournment; i++) {
 				if( best==null || listCandidates.get(i).getValue().intValue() > best.getValue().intValue()){
 					best = listCandidates.get(i);
 				}
 			}
 			//here we add the champion as a parent
-			// O melhor indivíduo é colocado na lista de pais que servirá de base para a próxima geração
+			// O melhor indivÃ­duo Ã© colocado na lista de pais que servirÃ¡ de base para a prÃ³xima geraÃ§Ã£o
 			listParents.add(best);
 			parentsAdded++;
 		}

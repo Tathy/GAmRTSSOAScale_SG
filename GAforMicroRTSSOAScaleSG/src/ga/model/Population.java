@@ -89,7 +89,7 @@ public class Population {
 	}
 	
 	/**
-	 * FunÃ§Ã£o que zera os valores das avaliaÃ§Ãµes dos Chromossomos.
+	 * Funï¿½ï¿½o que zera os valores das avaliaï¿½ï¿½es dos Chromossomos.
 	 */
 	public void clearValueChromosomes(){
 		for(Chromosome chromo : this.Chromosomes.keySet()){
@@ -100,17 +100,19 @@ public class Population {
 	//static methods
 	
 	/**
-	 * Cria uma população inicial gerada randomicamente.
-	 * @param size Tamanho limite da população
-	 * @return uma população com Key = Chromosome e Values = 0
+	 * Cria uma populaï¿½ï¿½o inicial gerada randomicamente.
+	 * @param size Tamanho limite da populaï¿½ï¿½o
+	 * @return uma populaï¿½ï¿½o com Key = Chromosome e Values =
 	 */
-	public static Population getInitialPopulation(int size, ScriptsTable scrTable){
+	public static Population getInitialPopulation(int size, ScriptsTable scrTable, boolean keepIndiv0){
 		HashMap<Chromosome, BigDecimal> newChromosomes = new HashMap<>();
 		
-		// Garante que o chromossomo com key = 0, vindo da interface, esteja dentro da população
-		Chromosome tChom0 = new Chromosome();
-		tChom0.addGene(0);
-		newChromosomes.put(tChom0, BigDecimal.ZERO);
+		if(keepIndiv0) {
+			// Garante que o chromossomo com key = 0 esteja dentro da populaï¿½ï¿½o
+			Chromosome tChom0 = new Chromosome();
+			tChom0.addGene(0);
+			newChromosomes.put(tChom0, BigDecimal.ZERO);
+		}
 		
 		Chromosome tChom;
 		while (newChromosomes.size()<size) {
@@ -140,14 +142,14 @@ public class Population {
 	public static Population getInitialPopulationMutation(int size, ScriptsTable scrTable){
 		HashMap<Chromosome, BigDecimal> newChromosomes = new HashMap<>();
 		
-		// Garante que o chromossomo com key = 0, vindo da interface, esteja dentro da população
+		// Garante que o chromossomo com key = 0, vindo da interface, esteja dentro da populaï¿½ï¿½o
 		Chromosome tChom0 = new Chromosome();
 		tChom0.addGene(0);
 		newChromosomes.put(tChom0, BigDecimal.ZERO);
 		
 		Chromosome tChom;
 		while (newChromosomes.size() < size) {
-			// Gerar novo cromossomo com mutação
+			// Gerar novo cromossomo com mutaï¿½ï¿½o
 			tChom = new Chromosome();
 			int sizeCh=rand.nextInt(ConfigurationsGA.SIZE_CHROMOSOME)+1;
 			
@@ -158,7 +160,7 @@ public class Population {
 			newChromosomes.put(tChom, BigDecimal.ZERO);
 		}
 		
-		System.out.println("Lista do newChromosome população 2:");
+		System.out.println("Lista do newChromosome populaï¿½ï¿½o 2:");
 		for(Chromosome k : newChromosomes.keySet() ) {
 			BigDecimal value = newChromosomes.get(k);
 			System.out.print(k.getGenes() + " = " + value + "; ");
@@ -212,7 +214,7 @@ public class Population {
 	 * @param gene Integer que serÃ¡ utilizado como gene dos cromossomos
 	 * @return uma populaÃ§Ã£o com Key = Chromosome e Values = 0
 	 */
-	public static Population getInitialPopulation(Integer gene){
+	public static Population getInitialPopulation(Integer gene, String id){
 		HashMap<Chromosome, BigDecimal> newChromosomes = new HashMap<>();
 		
 		Chromosome tChom;
@@ -239,27 +241,27 @@ public class Population {
 		return true;
 	}
 	
-	public void fillAllCommands(String pathscrTable)
-	{
+	public void fillAllCommands(String pathscrTable, String idTable) {
 		allCommandsperGeneration.clear();
-		this.pathTableScripts=pathscrTable;
-		buildScriptsAlternativeTable();
+		this.pathTableScripts = pathscrTable;
+		buildScriptsAlternativeTable(idTable);
 	    Iterator it = Chromosomes.entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
-	        int id=((BigDecimal)pair.getValue()).intValue();
-	        ArrayList<Integer> scriptsId= ((Chromosome)pair.getKey()).getGenes();
+	        int id = ((BigDecimal)pair.getValue()).intValue();
+	        ArrayList<Integer> scriptsId = ((Chromosome)pair.getKey()).getGenes();
 	        String completeGrammars;
-	        for(Integer idScript:scriptsId) 
-	        {
+	        
+	        for(Integer idScript:scriptsId) {
 	        	//System.out.println(scriptsAlternativeTable);
-	        	completeGrammars=scriptsAlternativeTable.get(BigDecimal.valueOf(idScript));
+	        	completeGrammars = scriptsAlternativeTable.get(BigDecimal.valueOf(idScript));
 	        	getCommandsFromFullScript(idScript,completeGrammars);
 	        }
 	        
 	        //it.remove(); // avoids a ConcurrentModificationException
 	    }
 	}
+	
 	public void getCommandsFromFullScript(int id,String script)
 	{
 		//System.out.println("script "+script);
@@ -318,9 +320,9 @@ public class Population {
 		this.allCommandsperGeneration = allCommandsperGeneration;
 	}
 	
-    public void buildScriptsAlternativeTable() {
+    public void buildScriptsAlternativeTable(String id) {
         scriptsAlternativeTable = new HashMap<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(pathTableScripts + "/ScriptsTable.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(pathTableScripts + "/ScriptsTable" + id + ".txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
             	//System.out.println(line);
@@ -340,10 +342,10 @@ public class Population {
     }
 
 
-	public void chooseusedCommands(String pathUsedCommands) {
+	public void chooseusedCommands(String pathUsedCommands, String id) {
 		// TODO Auto-generated method stub
 		
-		readUsedCommands(pathUsedCommands);
+		readUsedCommands(pathUsedCommands, id);
 	}
 	
 	public void removeCommands(ScriptsTable scrTable) {
@@ -583,7 +585,7 @@ public class Population {
 							closed=true;
 							countOpen--;
 						}
-						else if(Character.isLetter(newGrammar.charAt(j)) && newGrammar.charAt(j) !='?' && newGrammar.charAt(j) !='¿')
+						else if(Character.isLetter(newGrammar.charAt(j)) && newGrammar.charAt(j) !='?' && newGrammar.charAt(j) !='ï¿½')
 						{
 							letter=true;
 						}
@@ -599,7 +601,7 @@ public class Population {
 							StringBuilder builder = new StringBuilder();
 							
 							builder.append(newGrammar.substring(0, start));
-							builder.append("¿");
+							builder.append("ï¿½");
 							builder.append(newGrammar.substring(start + removedExcess.length()));
 							newGrammar=builder.toString();
 							
@@ -719,8 +721,7 @@ public class Population {
 		return newGrammar;
 	}
 	
-	public void readUsedCommands(String pathUsedCommands)
-	{
+	public void readUsedCommands(String pathUsedCommands, String id) {
 		usedCommandsperGeneration.clear();
 		List <String> usedCommands;
 
@@ -728,9 +729,9 @@ public class Population {
 		if (COMMFolder != null) {
 
 			for (File folder : COMMFolder.listFiles()) {
-				File arq = new File(folder+"/LogsGrammars.txt");
+				File arq = new File(folder+"/LogsGrammars" + id + ".txt");
 				if(arq.exists()) {
-					try (BufferedReader br = new BufferedReader(new FileReader(folder+"/LogsGrammars.txt"))) {
+					try (BufferedReader br = new BufferedReader(new FileReader(folder+"/LogsGrammars" + id + ".txt"))) {
 						String line;
 						while ((line = br.readLine()) != null) {
 							String parts[]=line.split(" ");
@@ -751,7 +752,7 @@ public class Population {
 							}				    	
 
 						}
-						File toDelete=new File(folder+"/LogsGrammars.txt");
+						File toDelete=new File(folder+"/LogsGrammars" + id + ".txt");
 						toDelete.delete();
 					} catch (FileNotFoundException e) {
 						// TODO Auto-generated catch block
@@ -871,7 +872,7 @@ public class Population {
 
 		String grammar=str;
 		grammar=grammar.replace("?", "");
-		grammar=grammar.replace("¿", "");
+		grammar=grammar.replace("ï¿½", "");
 
 		boolean atLeastOne=true;
 		while(atLeastOne)

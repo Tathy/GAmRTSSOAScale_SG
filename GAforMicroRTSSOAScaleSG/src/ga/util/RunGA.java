@@ -14,17 +14,16 @@ import ga.ScriptTableGenerator.ScriptsTable;
 import ga.config.ConfigurationsGA;
 import ga.model.Population;
 import ga.util.Evaluation.RatePopulation;
+import ga.util.Evaluation.RatePopulations;
 import util.sqlLite.Log_Facade;
 
 
-// Modificado para rodar com Script criado atravÈs da interface
-
 public class RunGA {
 
-	private Population population;
+	private Population population1;
 	private Instant timeInicial;
 	private int generations = 0;
-	private ScriptsTable scrTable;
+	private ScriptsTable scrTable1;
 	
 	private Population population2;
 	private ScriptsTable scrTable2;
@@ -39,57 +38,65 @@ public class RunGA {
 	//private final String pathTableScripts = "/home/rubens/cluster/TesteNewGASG/Table/";
 
 	
-	// O que est· marcado com 4 barras foi o que o Julian tirou para poder testar no notebook
+	// O que est√° marcado com 4 barras foi o que o Julian tirou para poder testar no notebook
 	/**
-	 * Este metodo aplicar· todas as fases do processo de um algoritmo GenÈtico
+	 * Este metodo aplicar√° todas as fases do processo de um algoritmo Gen√©tico
 	 * 
 	 * @param evalFunction
-	 *            Ser· a funÁ„o de avaliaÁ„o que desejamos utilizar
+	 *            Ser√° a fun√ß√£o de avalia√ß√£o que desejamos utilizar
 	 */
 	
 	
-	//  A funÁ„o de avaliaÁ„o ir· controlar as chamadas no cluster, ou fazer os c·lculos das simulaÁıes e entregar uma populaÁ„o devidamente avaliada.
-	public Population run(RatePopulation evalFunction) {
+	//  A fun√ß√£o de avalia√ß√£o ir√° controlar as chamadas no cluster, ou fazer os c√°lculos das simula√ß√µes e entregar uma popula√ß√£o devidamente avaliada.
+	public Population run(RatePopulations evalFunction) {
 
 		// Creating the table of scripts
-		scrTable = new ScriptsTable(pathTableScripts, "1");
+		scrTable1 = new ScriptsTable(pathTableScripts, "1");
 		scrTable2 = new ScriptsTable(pathTableScripts, "2");
 		//do {
 			if(!ConfigurationsGA.recoverTable) {  //recoverTable = false
-				// Preenche tabela de scripts com o indivÌduo vindo da interface com a key 0
-				scrTable = scrTable.generateScriptsTable(ConfigurationsGA.SIZE_TABLE_SCRIPTS);
-				scrTable2 = scrTable2.generateScriptsTableMutation(ConfigurationsGA.SIZE_TABLE_SCRIPTS_MUTATION);
-				System.out.println("teste");
+				// Preenche tabela com scripts aleat√≥rios
+				scrTable1 = scrTable1.generateScriptsTable(ConfigurationsGA.SIZE_TABLE_SCRIPTS);
+				// Preenche tabela de scripts com o indiv√≠duo vindo da interface com a key 0 e o resto com muta√ß√µes dele
+				scrTable2 = scrTable2.generateScriptsTableMutation(ConfigurationsGA.SIZE_TABLE_SCRIPTS_2);
 			} else {
-				scrTable = scrTable.generateScriptsTableRecover();
+				scrTable1 = scrTable1.generateScriptsTableRecover();
 			}
 			
 		//}while(scrTable.checkDiversityofTypes());
-		scrTable.setCurrentSizeTable(scrTable.getScriptTable().size());
+		scrTable1.setCurrentSizeTable(scrTable1.getScriptTable().size());
+		scrTable2.setCurrentSizeTable(scrTable2.getScriptTable().size());
 
-		PrintWriter f0;
+		PrintWriter f1;
+		PrintWriter f2;
 		try {
 			////f0 = new PrintWriter(new FileWriter(pathLogs+"Tracking.txt")); //trocar
-			f0 = new PrintWriter(new FileWriter("Tracking.txt")); // Arquivo onde a primeira populaÁ„o vai ser salva
+			f1 = new PrintWriter(new FileWriter("Tracking1.txt")); // Arquivo onde a primeira popula√ß√£o vai ser salva
+			f2 = new PrintWriter(new FileWriter("Tracking2.txt")); // Arquivo onde a segunda popula√ß√£o vai ser salva
 
-			do {	//cluster
-				// FASE 1 = gerar a populaÁ„o inicial
+			//do {	//cluster
+				// FASE 1 = gerar a popula√ß√£o inicial
 				if(!ConfigurationsGA.curriculum){ //curriculum = false
-					population = Population.getInitialPopulation(ConfigurationsGA.SIZE_POPULATION, scrTable);
+					population1 = Population.getInitialPopulation(ConfigurationsGA.SIZE_POPULATION, scrTable1, false);
+					population2 = Population.getInitialPopulation(ConfigurationsGA.SIZE_POPULATION_2, scrTable2, true);
 				} else {
-					population = Population.getInitialPopulationCurriculum(ConfigurationsGA.SIZE_POPULATION, scrTable, pathInitialPopulation);
+					population1 = Population.getInitialPopulationCurriculum(ConfigurationsGA.SIZE_POPULATION, scrTable1, pathInitialPopulation);
 				}		
 			
 
-				// FASE 2 = avalia a populaÁ„o
-				////population = evalFunction.evalPopulation(population, this.generations, scrTable); //custer (descomentar para teste local que o Rubens ensinou)
+				// FASE 2 = avalia a popula√ß√£o
+				//population1 = evalFunction.evalPopulation(population1, population2, this.generations, scrTable1, scrTable2, "1", "2"); //custer (descomentar para teste local que o Rubens ensinou)
+				//population2 = evalFunction.evalPopulation(population2, population1, this.generations, scrTable2, scrTable1, "2", "1");
 				
 				//population.printWithValue(f0);
 				//System.out.println("sep");
 				
 				//Get all the used commands
-				if(ConfigurationsGA.removeRules==true)
-					population.fillAllCommands(pathTableScripts);
+				if(ConfigurationsGA.removeRules == true) {
+					population1.fillAllCommands(pathTableScripts, "1");
+					population2.fillAllCommands(pathTableScripts, "2");
+				}
+					
 				
 				/*
 			    Iterator it = population.getAllCommandsperGeneration().entrySet().iterator();
@@ -102,8 +109,10 @@ public class RunGA {
 			    */
 			    
 				//Choose the used commands
-				if(ConfigurationsGA.removeRules==true)
-					population.chooseusedCommands(pathUsedCommands);
+				if(ConfigurationsGA.removeRules==true) {
+					population1.chooseusedCommands(pathUsedCommands, "1");
+					population2.chooseusedCommands(pathUsedCommands, "2");
+				}
 				
 				/*
 			    Iterator it = population.getUsedCommandsperGeneration().entrySet().iterator();
@@ -117,8 +126,11 @@ public class RunGA {
 				*/
 				
 				//Remove used commands from all commands
-				if(ConfigurationsGA.removeRules==true)
-					population.removeCommands(scrTable);
+				if(ConfigurationsGA.removeRules==true) {
+					population1.removeCommands(scrTable1);
+					population2.removeCommands(scrTable2);
+				}
+				
 				/*
 			    Iterator it3 = population.getAllCommandsperGeneration().entrySet().iterator();
 			    while (it3.hasNext()) {
@@ -129,33 +141,40 @@ public class RunGA {
 			    }
 			    */
 				
-			    // Impress„o dos indivÌduos da populaÁ„o e seus valores de avaliaÁ„o apÛs partidas no cluster
+			    // Impress√£o dos indiv√≠duos da popula√ß√£o e seus valores de avalia√ß√£o ap√≥s partidas no cluster
 				//System.out.println("Log - Generation = " + this.generations);
 				//f0.println("Log - Generation = " + this.generations);
 				//population.printWithValue(f0);
 				
-			} while (resetPopulation(population));	//cluster
+			//} while (resetPopulation(population1) && resetPopulation(population2));	//cluster
 
 		resetControls();
 		
-		// FASE 3 = critÈrio de parada
+		// FASE 3 = crit√©rio de parada
 		while (continueProcess()) {
 
-			// FASE 4 = SeleÁ„o (Aplicar Cruzamento e MutaÁ„o)
-			Selection selecao = new Selection();	// sem construtor
-			// Retorna a nova populaÁ„o apÛs todos os processos envolvidos na reproduÁ„o para a prÛxima geraÁ„o
-			population = selecao.applySelection(population, scrTable, pathTableScripts);
+			// FASE 4 = Sele√ß√£o (Aplicar Cruzamento e Muta√ß√£o)
+			Selection selecao1 = new Selection();
+			Selection selecao2 = new Selection(); 
+			// Retorna a nova popula√ß√£o ap√≥s todos os processos envolvidos na reprodu√ß√£o para a pr√≥xima gera√ß√£o
+			population1 = selecao1.applySelection(population1, scrTable1, pathTableScripts);
+			population2 = selecao2.applySelection(population2, scrTable2, pathTableScripts);
 
-			// Repete-se Fase 2 = AvaliaÁ„oo da populaÁ„o
-			////population = evalFunction.evalPopulation(population, this.generations, scrTable);	//cluster
+			// Repete-se Fase 2 = Avalia√ß√£oo da popula√ß√£o
+			//population1 = evalFunction.evalPopulation(population1, population2, this.generations, scrTable1, scrTable2, "1", "2");
+			//population2 = evalFunction.evalPopulation(population2, population1, this.generations, scrTable2, scrTable1, "2", "1");
 			
 			//Get all the used commands
-			if(ConfigurationsGA.removeRules==true)
-				population.fillAllCommands(pathTableScripts);
+			if(ConfigurationsGA.removeRules==true) {
+				population1.fillAllCommands(pathTableScripts, "1");
+				population2.fillAllCommands(pathTableScripts, "2");
+			}
 			
 			//Remove the unused commands
-			if(ConfigurationsGA.removeRules==true)
-				population.chooseusedCommands(pathUsedCommands);
+			if(ConfigurationsGA.removeRules==true) {
+				population1.chooseusedCommands(pathUsedCommands, "1");
+				population2.chooseusedCommands(pathUsedCommands, "2");
+			}
 //		    Iterator it = population.getUsedCommandsperGeneration().entrySet().iterator();
 //		    while (it.hasNext()) {
 //		        Map.Entry pair = (Map.Entry)it.next();
@@ -165,10 +184,12 @@ public class RunGA {
 //		        //it.remove(); // avoids a ConcurrentModificationException
 //		    }
 			//Remove used commands from all commands
-			if(ConfigurationsGA.removeRules==true)
-				population.removeCommands(scrTable);
+			if(ConfigurationsGA.removeRules==true) {
+				population1.removeCommands(scrTable1);
+				population1.removeCommands(scrTable1);
+			}
 
-			// atualiza a geraÁ„o
+			// atualiza a gera√ß√£o
 			updateGeneration();
 
 			//System.out.println("Log - Generation = " + this.generations);
@@ -182,13 +203,13 @@ public class RunGA {
 			}
 		}
 		
-		f0.close();
+		f1.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return population;
+		return population1;
 	}
 
 	private boolean resetPopulation(Population population2) {
@@ -227,7 +248,7 @@ public class RunGA {
 	}
 
 	/**
-	 * Fun√ß√£o que inicia o contador de tempo para o crit√©rio de parada
+	 * Fun√É¬ß√É¬£o que inicia o contador de tempo para o crit√É¬©rio de parada
 	 */
 	protected void resetControls() {
 		this.timeInicial = Instant.now();

@@ -61,7 +61,7 @@ public class Reproduction {
 			for(int i=0;i<maxSize;i++) {
 				int newGen=rand.nextInt(2)+1; //valor sorteado 1 ou 2
 				//if random was 1, add the parent1 gene, if was 2 add the parent2 gene.
-				// Cada gene é um comando usado nos scripts que formam o cromossomo, é mapeado em BasicExpandedConfigurableScript
+				// Cada gene ï¿½ um comando usado nos scripts que formam o cromossomo, ï¿½ mapeado em BasicExpandedConfigurableScript
 				if(newGen == 1) {
 					if(i<sizeParent1)
 						child.addGene(parent1.getGenes().get(i));
@@ -196,12 +196,24 @@ public class Reproduction {
 		return newGeneration;
 	}
 	
-	public Population CrossoverSingleScript(){
+	public Population CrossoverSingleScript(String id){
 		Population newGeneration;
-		HashMap<Chromosome, BigDecimal> newChromosomes =new HashMap<Chromosome, BigDecimal>();		
-		int numberEliteMutated=ConfigurationsGA.SIZE_ELITE;
+		HashMap<Chromosome, BigDecimal> newChromosomes =new HashMap<Chromosome, BigDecimal>();
+		int numberEliteMutated, size_elite, size_population, size_invaders;
 		
-		while(newChromosomes.size()<(ConfigurationsGA.SIZE_POPULATION-ConfigurationsGA.SIZE_ELITE-ConfigurationsGA.SIZE_INVADERS-numberEliteMutated)) {
+		if(id == "1") {
+			numberEliteMutated = ConfigurationsGA.SIZE_ELITE;
+			size_elite = ConfigurationsGA.SIZE_ELITE;
+			size_population = ConfigurationsGA.SIZE_POPULATION;
+			size_invaders = ConfigurationsGA.SIZE_INVADERS;
+		} else {
+			numberEliteMutated = ConfigurationsGA.SIZE_ELITE_2;
+			size_elite = ConfigurationsGA.SIZE_ELITE_2;
+			size_population = ConfigurationsGA.SIZE_POPULATION_2;
+			size_invaders = ConfigurationsGA.SIZE_INVADERS_2;
+		}
+		
+		while(newChromosomes.size()<(size_population - size_elite - size_invaders - numberEliteMutated)) {
 			//here we shuffle the list of parents in order to select always two different parents to reproduce
 			Collections.shuffle(parents);
 			Chromosome parent1=parents.get(0).getKey();
@@ -209,12 +221,12 @@ public class Reproduction {
 			//System.out.println("parent1 "+parent1.getGenes());
 			//System.out.println("parent2 "+parent2.getGenes());
 			
-			// Corta scripts em pedaços que definem cada gene (?)
+			// Corta scripts em pedaÃ§os que definem cada gene (?)
 			String [] parentGenotype1 = recoverParentStringParts(parent1.getGenes().get(0));
 			String [] parentGenotype2 = recoverParentStringParts(parent2.getGenes().get(0));
 			
-			Chromosome child1= new Chromosome();
-			Chromosome child2= new Chromosome();
+			Chromosome child1 = new Chromosome();
+			Chromosome child2 = new Chromosome();
 			ArrayList <String> childGenotype1 = new ArrayList<>();
 			ArrayList <String> childGenotype2 = new ArrayList<>();
 
@@ -227,13 +239,13 @@ public class Reproduction {
 			
 			// definindo valores dos breakParents
 			if(sizeParent1 > 1) {
-				breakParent1=rand.nextInt(sizeParent1+1);
+				breakParent1 = rand.nextInt(sizeParent1+1);
 			} else {
-				breakParent1=0;
+				breakParent1 = 0;
 			}
 			
 			if(sizeParent2>1) {
-				breakParent2=rand.nextInt(sizeParent2+1);
+				breakParent2 = rand.nextInt(sizeParent2+1);
 			} else {
 				breakParent2=0;
 			}
@@ -274,12 +286,12 @@ public class Reproduction {
 			p2sub2.forEach(System.out::println);
 			*/
 			
-			// Adiciona pedaços de cada pai ao filho 1
+			// Adiciona pedaÃ§os de cada pai ao filho 1
 			childGenotype1.addAll(p1sub1);
 			childGenotype1.addAll(p2sub2);
 			String[] arrchildGenotype1 = childGenotype1.toArray(new String[childGenotype1.size()]);
 			
-			// Adiciona pedaços de cada pai ao filho 2
+			// Adiciona pedaÃ§os de cada pai ao filho 2
 			childGenotype2.addAll(p1sub2);
 			childGenotype2.addAll(p2sub1);
 			String[] arrchildGenotype2 = childGenotype2.toArray(new String[childGenotype2.size()]);
@@ -301,25 +313,25 @@ public class Reproduction {
 			//System.out.println("childConcatenated2"+childConcatenated2);
 			
 			int newId;
-			// Caso o filho 1 gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
+			// Caso o filho 1 gerado jÃ¡ tenha um equivalente na scrTable, o ID usado serÃ¡ o mesmo do jÃ¡ existente
 			if(scrTable.getScriptTable().containsKey(childConcatenated1)){
 				newId = scrTable.getScriptTable().get(childConcatenated1).intValue();
 				//System.out.println("oldId1 "+ newId);
 				child1.addGene(newId);
 			}
-			// Caso o filho 1 gerado não tenha equivalente na scrTable, ele é adicionado no final, com ID = tamanho atual da tabela de scripts
+			// Caso o filho 1 gerado nÃ£o tenha equivalente na scrTable, ele Ã© adicionado no final, com ID = tamanho atual da tabela de scripts
 			else if(!scrTable.getScriptTable().containsKey(childConcatenated1) && childConcatenated1.length()>0){
 				//System.out.println("beforeMutateScript "+cromScriptOriginal);
 				//System.out.println("afterMutateScript "+cromScript);
 				newId=scrTable.getScriptTable().size();
 				scrTable.getScriptTable().put(childConcatenated1, BigDecimal.valueOf(newId));
 				scrTable.setCurrentSizeTable(scrTable.getScriptTable().size());
-				addLineFile(newId+" "+childConcatenated1);
+				addLineFile(newId+" "+childConcatenated1, scrTable.getID());
 				//System.out.println("newId1 "+ newId);
 				child1.addGene(newId);
 			}
 			
-			// O processo de adição do filho 2 é igual ao do filho 1
+			// O processo de adiÃ§Ã£o do filho 2 Ã© igual ao do filho 1
 			if(scrTable.getScriptTable().containsKey(childConcatenated2)){
 				newId= scrTable.getScriptTable().get(childConcatenated2).intValue();
 				//System.out.println("oldId2 "+ newId);
@@ -331,7 +343,7 @@ public class Reproduction {
 				newId=scrTable.getScriptTable().size();
 				scrTable.getScriptTable().put(childConcatenated2, BigDecimal.valueOf(newId));
 				scrTable.setCurrentSizeTable(scrTable.getScriptTable().size());
-				addLineFile(newId+" "+childConcatenated2);
+				addLineFile(newId+" "+childConcatenated2, scrTable.getID());
 				child2.addGene(newId);
 				//System.out.println("newId2 "+ newId);
 			}
@@ -368,7 +380,7 @@ public class Reproduction {
 				newChromosomes.put(child2, BigDecimal.ZERO);
 		}
 		
-		newGeneration=new Population(newChromosomes);
+		newGeneration = new Population(newChromosomes);
 		return newGeneration;
 	}
 
@@ -385,19 +397,19 @@ public class Reproduction {
 		return 0;
 	}
 	
-	// Retorna nova população após o processo de mutação
+	// Retorna nova populaÃ§Ã£o apÃ³s o processo de mutaÃ§Ã£o
 	@SuppressWarnings("unchecked")
-	public Population mutation(Population population) {
+	public Population mutation(Population population, String id) {
 		//This method replace each gene with a random script with a probability of 10%
 		HashMap<Chromosome, BigDecimal> chromosomesMutated = new HashMap<>();
 		
-		// Itera sobre todos os cromossomos da população passada como parâmetro
+		// Itera sobre todos os cromossomos da populaï¿½ï¿½o passada como parï¿½metro
 		for(Chromosome chromosome : population.getChromosomes().keySet()){
 			Chromosome newCh = new Chromosome();
 			newCh.setGenes((ArrayList<Integer>) chromosome.getGenes().clone());
 			
-			for(int i=0; i<newCh.getGenes().size();i++){
-				double mutatePercent = ConfigurationsGA.MUTATION_RATE;  // MUTATION_RATE = 0.2 20%
+			for(int i = 0; i < newCh.getGenes().size(); i++){
+				double mutatePercent = ConfigurationsGA.MUTATION_RATE;  // MUTATION_RATE = 20%
 				boolean m = rand.nextFloat() <= mutatePercent;
 				
 				if(ConfigurationsGA.evolvingScript){ // evolvingScript = true
@@ -408,12 +420,12 @@ public class Reproduction {
 					//newCh.getGenes().set(i, rand.nextInt(scrTable.getCurrentSizeTable()));
 					
 					//The next line is added in order to keep mutation of rules
-					// A mutationScript faz a mutação com manipulação de strings, adiciona o novo cromossomo (script) na scrTable e retorna o ID deste novo cromossomo
-					newCh.getGenes().set(i, mutationScript(population, newCh.getGenes().get(i)));
+					// A mutationScript faz a mutaï¿½ï¿½o com manipulaï¿½ï¿½o de strings, adiciona o novo cromossomo (script) na scrTable e retorna o ID deste novo cromossomo
+					newCh.getGenes().set(i, mutationScript(population, newCh.getGenes().get(i), id));
 				}
 			}
 			
-			// Coloca o novo cromossomo, com mutação sofrida ou não, no novo conjunto de cromossomos
+			// Coloca o novo cromossomo, com mutaï¿½ï¿½o sofrida ou nï¿½o, no novo conjunto de cromossomos
 			chromosomesMutated.put(newCh, BigDecimal.ZERO);
 		}
 		
@@ -421,7 +433,7 @@ public class Reproduction {
 		return population;
 	}
 	
-	public Population eliteMutated(Population p,HashMap<Chromosome, BigDecimal> elite){
+	public Population eliteMutated(Population population, HashMap<Chromosome, BigDecimal> elite, String id){
 		//This method replace each gene with a random script with a probability of 10%
 		HashMap<Chromosome, BigDecimal> eliteMutated = new HashMap<>();
 		
@@ -444,41 +456,50 @@ public class Reproduction {
 					//newCh.getGenes().set(i, rand.nextInt(scrTable.getCurrentSizeTable()));
 					
 					//The next line is added in order to keep mutation of rules
-					// A mutationScript faz a mutação com manipulação de strings, adiciona o novo cromossomo (script) na scrTable e retorna o ID deste novo cromossomo
-					newCh.getGenes().set(i, mutationScript( p,newCh.getGenes().get(i)));
+					// A mutationScript faz a mutaï¿½ï¿½o com manipulaï¿½ï¿½o de strings, adiciona o novo cromossomo (script) na scrTable e retorna o ID deste novo cromossomo
+					newCh.getGenes().set(i, mutationScript(population, newCh.getGenes().get(i), id ));
 				}
 			}
 			
-			// Se a elite já possui o novo cromossomo que sofreu ou não mutação
+			// Se a elite jÃ¡ possui o novo cromossomo que sofreu ou nÃ£o mutaÃ§Ã£o
 			if(elite.containsKey(newCh) ){
 				int scriptToMutate = rand.nextInt(newCh.getGenes().size());
 				//
-				newCh.getGenes().set(scriptToMutate, mutationScriptMandatory( newCh.getGenes().get(scriptToMutate)));
+				newCh.getGenes().set(scriptToMutate, mutationScriptMandatory( newCh.getGenes().get(scriptToMutate), id));
 			}
 			eliteMutated.put(newCh, BigDecimal.ZERO);
 			//System.out.println("after mutating "+newCh.getGenes());
 		}
 		//System.out.println("sizepop before"+p.getChromosomes().size());
-		p.getChromosomes().putAll(eliteMutated);
+		population.getChromosomes().putAll(eliteMutated);
 		//System.out.println("sizepop after"+p.getChromosomes().size());
-		return p;
+		return population;
 		
 	}
 	
 	
-	public Population invaders(Population population) {
+	public Population invaders(Population population, String id) {
 		HashMap<Chromosome, BigDecimal> newChromosomes = population.getChromosomes();
-		
 		Chromosome tChom;
-		int numberEliteMutated = ConfigurationsGA.SIZE_ELITE;
+		int numberEliteMutated, size_population, size_elite;
 		
-		// tamanho da nova população < tamanho padrão da população - tamanho padrão da elite - quantidade de pertencentes à elite que sofreram mutação
-		while (newChromosomes.size() < ConfigurationsGA.SIZE_POPULATION - ConfigurationsGA.SIZE_ELITE - numberEliteMutated) {
+		if(id == "1") {
+			numberEliteMutated = ConfigurationsGA.SIZE_ELITE;
+			size_population = ConfigurationsGA.SIZE_POPULATION;
+			size_elite = ConfigurationsGA.SIZE_ELITE;
+		} else {
+			numberEliteMutated = ConfigurationsGA.SIZE_ELITE_2;
+			size_population = ConfigurationsGA.SIZE_POPULATION_2;
+			size_elite = ConfigurationsGA.SIZE_ELITE_2;
+		}
+		
+		// tamanho da nova populaÃ§Ã£o < tamanho padrÃ£o da populaÃ§Ã£o - tamanho padrÃ£o da elite - quantidade de pertencentes Ã  elite que sofreram mutaÃ§Ã£o
+		while (newChromosomes.size() < size_population - size_elite - numberEliteMutated) {
 			//gerar o novo cromossomo com base no tamanho
 			tChom = new Chromosome();
 			int sizeCh = rand.nextInt(ConfigurationsGA.SIZE_CHROMOSOME) + 1;
 			
-			// Adiciona genes aleatórios ao cromossomo até preencher o tamanho padrão
+			// Adiciona genes aleatï¿½rios ao cromossomo atï¿½ preencher o tamanho padrï¿½o
 			for (int j = 0; j < sizeCh; j++) {
 				tChom.addGene(rand.nextInt(scrTable.getCurrentSizeTable()));
 			}
@@ -491,13 +512,16 @@ public class Reproduction {
 	}
 	
 	//This method will return the new id script for mutate the porfolio o fscripts ????
-	// População (passada como parâmetro na mutation); genidScript (clone do cromossomo atual da iteração na mutation)
-	// A mutationScript faz a mutação com manipulação de strings, adiciona o novo cromossomo (script) na scrTable e retorna o ID deste novo cromossomo
-	public int mutationScript(Population population, int genidScript){
-		// Lista as funções básicas e condicionais
+	// Populaï¿½ï¿½o (passada como parï¿½metro na mutation); genidScript (clone do cromossomo atual da iteraï¿½ï¿½o na mutation)
+	// A mutationScript faz a mutaï¿½ï¿½o com manipulaï¿½ï¿½o de strings, adiciona o novo cromossomo (script) na scrTable e retorna o ID deste novo cromossomo
+	public int mutationScript(Population population, int genidScript, String id){
+		// Lista as funï¿½ï¿½es bï¿½sicas e condicionais
 		functions=new FunctionsforGrammar();
 		List<FunctionsforGrammar> basicFunctions=functions.getBasicFunctionsForGrammar();
 		List<FunctionsforGrammar> conditionalFunctions=functions.getConditionalsForGrammar();
+		boolean same;
+		if(id == "1") same = false;
+		else same = true;
 		
 		String cromScript = cromosomeById(genidScript);
 		String cromScriptOriginal = cromosomeById(genidScript);
@@ -515,9 +539,9 @@ public class Reproduction {
 	       
 	    // Itera sobre todas as partes e faz tratamento de strings
 	    for(int i = 0; i < parts.length; i++) {
-	    	// Retira ifs e parênteses do começo
+	    	// Retira ifs e parï¿½nteses do comeï¿½o
 		    parts[i] = removeFromBeggining(parts[i]);
-		    // Retira parênteses do final
+		    // Retira parï¿½nteses do final
 		    parts[i] = removeFromLast(parts[i]);
 	    }
 		   
@@ -528,10 +552,10 @@ public class Reproduction {
 	    }
 	    */
 	    
-	    // Retorna novo conjunto de scripts após o processo de mutação
-	    news = chossingFromBag(news, parts, basicFunctions, conditionalFunctions, false);
+	    // Retorna novo conjunto de scripts apÃ³ o processo de mutaÃ§Ã£o
+	    news = chossingFromBag(news, parts, basicFunctions, conditionalFunctions, same);
 	    
-	    // Itera sobre todo o vetor de partes, sorteia a chance de mutação e substitui o novo cromossomo sobre o antigo que sofre mutação
+	    // Itera sobre todo o vetor de partes, sorteia a chance de mutaÃ§Ã£o e substitui o novo cromossomo sobre o antigo que sofre mutaÃ§Ã£o
 	    for(int i=0; i <parts.length; i++){
 	    	double mutatePercent = ConfigurationsGA.MUTATION_RATE_RULE;
 	    	boolean m = rand.nextFloat() <= mutatePercent;
@@ -540,30 +564,34 @@ public class Reproduction {
 	    		cromScript = replaceFromCompleteGrammar(parts[i], news[i], cromScript );
 	    }
 	    
-	    // Caso o novo cromossomo gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
+	    // Caso o novo cromossomo gerado jÃ¡ tenha um equivalente na scrTable, o ID usado serÃ¡ o mesmo do jÃ¡ existente
 	    cromScript = removingTrashFromGrammar(cromScript);
 		if(scrTable.getScriptTable().containsKey(cromScript)){
 			return scrTable.getScriptTable().get(cromScript).intValue();			
 		} else {
-			// Caso o novo cromossomo gerado não tenha equivalente na scrTable, ele é adicionado no final, com ID = tamanho atual da tabela de scripts
+			// Caso o novo cromossomo gerado nÃ£o tenha equivalente na scrTable, ele Ã© adicionado no final, com ID = tamanho atual da tabela de scripts
 			//System.out.println("beforeMutateScript "+cromScriptOriginal);
 			//System.out.println("afterMutateScript "+cromScript);
 			int newId = scrTable.getScriptTable().size();
 			scrTable.getScriptTable().put(cromScript, BigDecimal.valueOf(newId));
 			scrTable.setCurrentSizeTable(scrTable.getScriptTable().size());
-			addLineFile(newId+" "+cromScript);
+			addLineFile(newId+" "+cromScript, scrTable.getID());
 			return newId;
 		}
 		
 	}
 	
-	// genidScript é o script que sofreu mutação na elite
-	// A mutationScriptMandatory faz a mutação com manipulação de strings, adiciona o novo cromossomo (script) na scrTable e retorna o ID deste novo cromossomo (100%)
-	public int mutationScriptMandatory(int genidScript){
-		// Lista as funções básicas e condicionais
+	// genidScript ï¿½ o script que sofreu mutaï¿½ï¿½o na elite
+	// A mutationScriptMandatory faz a mutaï¿½ï¿½o com manipulaï¿½ï¿½o de strings, adiciona o novo cromossomo (script) na scrTable e retorna o ID deste novo cromossomo (100%)
+	public int mutationScriptMandatory(int genidScript, String id){
+		// Lista as funï¿½ï¿½es bï¿½sicas e condicionais
 		functions = new FunctionsforGrammar();
 		List<FunctionsforGrammar> basicFunctions=functions.getBasicFunctionsForGrammar();
 		List<FunctionsforGrammar> conditionalFunctions=functions.getConditionalsForGrammar();
+		boolean same;
+		
+		if(id == "1") same = false;
+		else same = true;
 
 		String cromScript=cromosomeById(genidScript);
 		String cromScriptOriginal=cromosomeById(genidScript);
@@ -580,9 +608,9 @@ public class Reproduction {
 	       
 	    // Itera sobre todas as partes e faz tratamento de strings
 	    for(int i=0;i<parts.length;i++){
-	    	// Retira ifs e parênteses do começo
+	    	// Retira ifs e parï¿½nteses do comeï¿½o
 		    parts[i]=removeFromBeggining(parts[i]);
-		    // Retira parênteses do final
+		    // Retira parï¿½nteses do final
 		    parts[i]=removeFromLast(parts[i]);
 	    }
 		   
@@ -591,14 +619,14 @@ public class Reproduction {
 //	    	System.out.println(parts[i]);
 //	    }
 	    
-	    // Retorna novo conjunto de scripts após o processo de mutação
-	    news = chossingFromBag(news,parts,basicFunctions,conditionalFunctions, false);
+	    // Retorna novo conjunto de scripts apï¿½s o processo de mutaï¿½ï¿½o
+	    news = chossingFromBag(news, parts, basicFunctions, conditionalFunctions, same);
 
-	    // Substitui a parte aleatória que vai sofrer a mutação para o novo cromossomo
+	    // Substitui a parte aleatï¿½ria que vai sofrer a mutaï¿½ï¿½o para o novo cromossomo
 	    int partToMutate = rand.nextInt(parts.length);
 	    cromScript = replaceFromCompleteGrammar(parts[partToMutate], news[partToMutate], cromScript );
 	    
-	    // Caso o novo cromossomo gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
+	    // Caso o novo cromossomo gerado jÃ¡ tenha um equivalente na scrTable, o ID usado serÃ¡ o mesmo do jÃ¡ existente
 	    cromScript = removingTrashFromGrammar(cromScript);
 		if(scrTable.getScriptTable().containsKey(cromScript)){
 			return scrTable.getScriptTable().get(cromScript).intValue();			
@@ -608,7 +636,7 @@ public class Reproduction {
 			int newId=scrTable.getScriptTable().size();
 			scrTable.getScriptTable().put(cromScript, BigDecimal.valueOf(newId));
 			scrTable.setCurrentSizeTable(scrTable.getScriptTable().size());
-			addLineFile(newId+" "+cromScript);
+			addLineFile(newId+" "+cromScript, scrTable.getID());
 			return newId;
 		}
 		
@@ -618,12 +646,12 @@ public class Reproduction {
 		String cloneS = s;
 		  
 		try {
-			// Retira abre parênteses (
+			// Retira abre parï¿½nteses (
 			while (cloneS.charAt(0)=='(' ){
 				cloneS=cloneS.replaceFirst("\\(", "");
 			}
 		
-			// Retira ifs e parênteses
+			// Retira ifs e parï¿½nteses
 			if(cloneS.startsWith("if")){
 				cloneS=cloneS.replaceFirst("if", "");
 				if(cloneS.charAt(0)=='('){
@@ -642,7 +670,7 @@ public class Reproduction {
 	public static String removeFromLast(String s){
 		String cloneS = s;
 		
-		// Retira fechamento de parênteses )
+		// Retira fechamento de parï¿½nteses )
 		while (cloneS.endsWith("))")) {
 			cloneS=cloneS.replaceFirst("\\)", "");
 		}
@@ -659,7 +687,7 @@ public class Reproduction {
 		return originalGrammar;
 	}
 	
-	// Vetor de Strings do mesmo tamanho do parts, Vetor de Strings com cromossomo cortado e tratado, conjuntos de funções básicas e condicionais
+	// Vetor de Strings do mesmo tamanho do parts, Vetor de Strings com cromossomo cortado e tratado, conjuntos de funï¿½ï¿½es bï¿½sicas e condicionais
 	public static String[]  chossingFromBag(String[] candidates, String[] originals, List<FunctionsforGrammar>basicFunctions, List<FunctionsforGrammar>conditionalFunctions, boolean same){
 		// candidates = news
 		// originais = parts
@@ -670,27 +698,27 @@ public class Reproduction {
 		for (int i = 0; i < originals.length; i++){
 			found = false;
 			
-			// Itera sobre todas as funções do conjunto de funções básicas
+			// Itera sobre todas as funÃ§Ãµes do conjunto de funÃ§Ãµes bÃ¡sicas
 			for (FunctionsforGrammar function:basicFunctions){
 				
 				if(originals[i].startsWith(function.getNameFunction())){
 					//change with other basicFunction
 					// Se o comando original estava dentro de um for
 					if(originals[i].contains(",u,") || originals[i].contains(",u)") || originals[i].contains("(u,")) {
-						// Forçar este m para o false pro TCC, usar a função que retorna um script com função equivalente ao original da interface
+
 						if(same)
 							m = false;
 						else
 							m = rand.nextFloat() <= 0.5;
 						
 						if(m){
-							// Retorna uma nova função básica totalmente aleatória, respeitando apenas a presença ou não do for u
+							// Retorna uma nova funÃ§Ã£o bÃ¡sica totalmente aleatÃ³ria, respeitando apenas a presenÃ§a ou nÃ£o do for
 							candidates[i] = objScriptTable.returnBasicFunctionClean(true);
 						} else {
-							// Retorna uma nova função básica de acordo com a função antiga, trocando os parâmetros
+							// Retorna uma nova funÃ§Ã£o bÃ¡sica de acordo com a funÃ§Ã£oo antiga, trocando os parÃ¢metros
 							candidates[i]=objScriptTable.returnBasicFunctionCleanSame(true, originals[i]);
 						}
-					// Se o comando original não estava dentro de um for
+					// Se o comando original nï¿½o estava dentro de um for
 					} else {
 						
 						if(same)
@@ -704,7 +732,7 @@ public class Reproduction {
 							candidates[i]=objScriptTable.returnBasicFunctionCleanSame(false,originals[i]);
 						}
 					}
-					// ????
+					
 					found = true;
 					break;
 				}
@@ -717,20 +745,20 @@ public class Reproduction {
 						//change with other basicFunction
 						// Se o comando original estava dentro de um for
 						if(originals[i].contains(",u,") || originals[i].contains(",u)") || originals[i].contains("(u,")){
-							// Forçar este m para o false pro TCC, usar a função que retorna um script com função equivalente ao original da interface
+							// Forï¿½ar este m para o false pro TCC, usar a funï¿½ï¿½o que retorna um script com funï¿½ï¿½o equivalente ao original da interface
 							if(same)
 								m = false;
 							else
 								m = rand.nextFloat() <= 0.5;
 							
 							if(m){
-								// Retorna uma nova função condicional totalmente aleatória, respeitando apenas a presença ou não do for u
+								// Retorna uma nova funï¿½ï¿½o condicional totalmente aleatï¿½ria, respeitando apenas a presenï¿½a ou nï¿½o do for u
 								candidates[i]=objScriptTable.returnConditionalClean(true);
 							} else {
-								// Retorna uma nova função básica de acordo com a função antiga, trocando os parâmetros
+								// Retorna uma nova funï¿½ï¿½o bï¿½sica de acordo com a funï¿½ï¿½o antiga, trocando os parï¿½metros
 								candidates[i]=objScriptTable.returnConditionalCleanSame(true,originals[i]);
 							}
-						// Se o comando original não estava dentro de um for
+						// Se o comando original nï¿½o estava dentro de um for
 						} else {
 							
 							if(same)
@@ -887,10 +915,10 @@ public class Reproduction {
 		
 	}
 	
-	public static void addLineFile(String data) {
+	public static void addLineFile(String data, String id) {
 	    try{    
 	
-	        File file =new File(pathTableScripts+"ScriptsTable.txt");    
+	        File file = new File(pathTableScripts + "ScriptsTable" + id + ".txt");    
 	
 	        //if file doesnt exists, then create it    
 	        if(!file.exists()){    

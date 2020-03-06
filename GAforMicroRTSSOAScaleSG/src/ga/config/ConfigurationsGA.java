@@ -2,12 +2,12 @@ package ga.config;
 
 public final class ConfigurationsGA {
 	public static final int SIZE_CHROMOSOME = 1;
-	public static final int SIZE_POPULATION = 100;//
+	public static final int SIZE_POPULATION = 25;//
 	public static final int NUMBER_JOBS = 39;
-	public static final int SIZE_ELITE = 10;//
-	public static final int SIZE_INVADERS = 10;//
-	public static final int K_TOURNMENT = 25; //
-	public static final int SIZE_PARENTSFORCROSSOVER = 40;//
+	public static final int SIZE_ELITE = 2;//
+	public static final int SIZE_INVADERS = 2;//
+	public static final int K_TOURNMENT = 6; //
+	public static final int SIZE_PARENTSFORCROSSOVER = 10;//
 	public static final double MUTATION_RATE = 0.2;
 	public static final double MUTATION_RATE_RULE = 0.2;
 	public static final double MUTATION_ORDER_RATE = 0.1;
@@ -28,7 +28,12 @@ public final class ConfigurationsGA {
 	public static final boolean curriculum = false;
 	public final static boolean UCB1=false;
 	
-	public static final int SIZE_TABLE_SCRIPTS_MUTATION = 10;
+	public static final int SIZE_TABLE_SCRIPTS_2 = 10;
+	public static final int SIZE_POPULATION_2 = 8;
+	public static final int SIZE_PARENTSFORCROSSOVER_2 = 3;
+	public static final int K_TOURNMENT_2 = 3;
+	public static final int SIZE_ELITE_2 = 2;
+	public static final int SIZE_INVADERS_2 = 2;
 	
     public static final int QTD_RULES_CONDITIONAL=115;
     public static final int QTD_RULES_BASIC_FUNCTIONS=518;

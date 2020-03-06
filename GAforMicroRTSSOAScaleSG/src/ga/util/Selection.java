@@ -14,39 +14,39 @@ import ga.model.Population;
 public class Selection {
 
 	/**
-	 * Este método será responsável por controlar o processo de seleção. 
-	 * Acredito que nele poderão ser feitas as chamadas para cruzamento e para mutação.
+	 * Este mï¿½todo serï¿½ responsï¿½vel por controlar o processo de seleï¿½ï¿½o. 
+	 * Acredito que nele poderï¿½o ser feitas as chamadas para cruzamento e para mutaï¿½ï¿½o.
 	 * 
-	 * @param populacaoInicial que será utilizada para aplicarmos as alterações.
+	 * @param populacaoInicial que serï¿½ utilizada para aplicarmos as alteraï¿½ï¿½es.
 	 * @return Population com os devidos novos cromossomos.
 	 */
 	
 	static Random rand = new Random();
 	
-	// populacaInicial, na primeira iteração, é a população gerada no getInitialPopulation
-	// scrTable é a tabela gerada no começo, com o generateScriptsTable
-	// pathTableScripts é o local onde a scrTable está salva
+	// populacaInicial, na primeira iteraÃ§Ã£o, populaÃ§Ã£o gerada no getInitialPopulation
+	// scrTable Ã© a tabela gerada no comeÃ§o, com o generateScriptsTable
+	// pathTableScripts Ã© o local onde a scrTable estÃ¡ salva
 	public Population applySelection(Population populacaoInicial,ScriptsTable scrTable, String pathTableScripts){
 
 		//System.out.println("printing the initial population");
 		//printMap(populacaoInicial.getChromosomes());
 
 		//class preselection have the methods for selecting parents according the tournament
-		// Pré-seleção com base em torneio e pontuações obtidas nas avaliações anteriores
+		// PrÃ©-seleÃ§Ã£o com base em torneio e pontuaÃ§Ãµes obtidas nas avaliaÃ§Ãµes anteriores
 		PreSelection ps = new PreSelection(populacaoInicial);			
-		List<Map.Entry<Chromosome, BigDecimal>> parents = ps.Tournament();
+		List<Map.Entry<Chromosome, BigDecimal>> parents = ps.Tournament(scrTable.getID());
 		
 		//System.out.println("printing the parents selected for reproduction ");
 		//printList(parents);
 
 		//Class Reproduction have the methods for getting new population according the parents obtained before using crossover and mutation
-		Reproduction rp = new Reproduction(parents, scrTable, pathTableScripts);	// este construtor só atribui campos
+		Reproduction rp = new Reproduction(parents, scrTable, pathTableScripts);	// este construtor sï¿½ atribui campos
 		//Population newPopulation = rp.UniformCrossover();	
 		Population newPopulation;
 		
 		if(ConfigurationsGA.evolvingScript) { // evaluationScript = true
-			// Retorna nova população após o Crossover
-			newPopulation = rp.CrossoverSingleScript();
+			// Retorna nova populaï¿½ï¿½o apï¿½s o Crossover
+			newPopulation = rp.CrossoverSingleScript(scrTable.getID());
 		} else {
 			newPopulation=rp.Crossover();
 		}
@@ -54,17 +54,17 @@ public class Selection {
 		//System.out.println("printing the new population after crossover");
 		//printMap(newPopulation.getChromosomes());
 		
-		// Retorna nova população após o processo de mutação
-		newPopulation = rp.mutation(newPopulation);
+		// Retorna nova populaï¿½ï¿½o apï¿½s o processo de mutaï¿½ï¿½o
+		newPopulation = rp.mutation(newPopulation, scrTable.getID());
 		
 		if(ConfigurationsGA.INCREASING_INDEX == true){ // INCREASING_INDEX = false
 			newPopulation=rp.IncreasePopulation(newPopulation);
 			newPopulation=rp.DecreasePopulation(newPopulation);
 		}
 		
-		// Coloca invasores na população
-		// No TCC, a população menor, baseada no script da interface, não deve ter invasores
-		newPopulation = rp.invaders(newPopulation);
+		// Coloca invasores na populaï¿½ï¿½o
+		// No TCC, a populaï¿½ï¿½o menor, baseada no script da interface, nï¿½o deve ter invasores
+		newPopulation = rp.invaders(newPopulation, scrTable.getID());
 		
 		//System.out.println("printing the new population after mutation");
 		//printMap(newPopulation.getChromosomes());
@@ -75,8 +75,8 @@ public class Selection {
 //		printMap(elite);
 		
 		//here we mutate copy of the elite individuals and add to the population
-		// Retorna nova elite para a nova população após o processo de mutação
-		newPopulation = rp.eliteMutated(newPopulation,elite);
+		// Retorna nova elite para a nova populaï¿½ï¿½o apï¿½s o processo de mutaï¿½ï¿½o
+		newPopulation = rp.eliteMutated(newPopulation,elite, scrTable.getID());
 
 		//joining elite and new sons in chromosomesNewPopulation, 
 		HashMap<Chromosome, BigDecimal> chromosomesNewPopulation = new HashMap<Chromosome, BigDecimal>();
@@ -120,12 +120,15 @@ public class Selection {
 
 		} 
 	}
-	public Population fillWithRandom(Population p,ScriptsTable scrTable)
-	{
-		while(p.getChromosomes().size()<ConfigurationsGA.SIZE_POPULATION)
-		{
+	public Population fillWithRandom(Population p,ScriptsTable scrTable) {
+		int size_population;
+		if(scrTable.getID() == "1") size_population = ConfigurationsGA.SIZE_POPULATION;
+		else size_population = ConfigurationsGA.SIZE_POPULATION_2;
+		
+		
+		while(p.getChromosomes().size() < size_population){
 			Chromosome tChom = new Chromosome();
-			int sizeCh=rand.nextInt(ConfigurationsGA.SIZE_CHROMOSOME)+1;
+			int sizeCh = rand.nextInt(ConfigurationsGA.SIZE_CHROMOSOME)+1;
 			for (int j = 0; j < sizeCh; j++) {
 				tChom.addGene(rand.nextInt(scrTable.getCurrentSizeTable()));
 			}
