@@ -213,7 +213,7 @@ public class Reproduction {
 			size_invaders = ConfigurationsGA.SIZE_INVADERS_2;
 		}
 		
-		while(newChromosomes.size()<(size_population - size_elite - size_invaders - numberEliteMutated)) {
+		while(newChromosomes.size() < (size_population - size_elite - size_invaders - numberEliteMutated)) {
 			//here we shuffle the list of parents in order to select always two different parents to reproduce
 			Collections.shuffle(parents);
 			Chromosome parent1=parents.get(0).getKey();
@@ -309,8 +309,8 @@ public class Reproduction {
 			String childConcatenated2 = recoverStringFromArray(arrchildGenotype2);
 			childConcatenated2 = childConcatenated2.trim();
 			
-			//System.out.println("childConcatenated1"+childConcatenated1);
-			//System.out.println("childConcatenated2"+childConcatenated2);
+			//System.out.println("childConcatenated1 " + childConcatenated1);
+			//System.out.println("childConcatenated2 " + childConcatenated2);
 			
 			int newId;
 			// Caso o filho 1 gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
@@ -519,6 +519,7 @@ public class Reproduction {
 		functions=new FunctionsforGrammar();
 		List<FunctionsforGrammar> basicFunctions=functions.getBasicFunctionsForGrammar();
 		List<FunctionsforGrammar> conditionalFunctions=functions.getConditionalsForGrammar();
+		
 		boolean same;
 		if(id == "1") same = false;
 		else same = true;

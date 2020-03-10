@@ -100,15 +100,15 @@ public class Population {
 	//static methods
 	
 	/**
-	 * Cria uma popula��o inicial gerada randomicamente.
-	 * @param size Tamanho limite da popula��o
-	 * @return uma popula��o com Key = Chromosome e Values =
+	 * Cria uma população inicial gerada randomicamente.
+	 * @param size Tamanho limite da população
+	 * @return uma população com Key = Chromosome e Values = 0
 	 */
 	public static Population getInitialPopulation(int size, ScriptsTable scrTable, boolean keepIndiv0){
 		HashMap<Chromosome, BigDecimal> newChromosomes = new HashMap<>();
 		
 		if(keepIndiv0) {
-			// Garante que o chromossomo com key = 0 esteja dentro da popula��o
+			// Garante que o chromossomo com key = 0 esteja dentro da população
 			Chromosome tChom0 = new Chromosome();
 			tChom0.addGene(0);
 			newChromosomes.put(tChom0, BigDecimal.ZERO);
@@ -136,6 +136,7 @@ public class Population {
 		*/
 		
 		Population pop = new Population(newChromosomes);
+		//System.out.println("Population dentro da getInitialPopulation: " + pop.getChromosomes().size());
 		return pop;
 	}
 	

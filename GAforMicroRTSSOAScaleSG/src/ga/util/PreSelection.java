@@ -26,10 +26,11 @@ public class PreSelection {
 	public List<Map.Entry<Chromosome, BigDecimal>> Tournament(String id){
 		//we want to select some parents (list parents) from all the population (listCandidates)
 		// Controle de pais adicionados para seleção, lista de pais, lista de candidatos com populção passada no construtor da classe (populacaoInicial)
-		int parentsAdded=0, size_parentsForCrossover, k_tournment;
+		int parentsAdded = 0, size_parentsForCrossover, k_tournment;
 		List<Map.Entry<Chromosome, BigDecimal>> listParents= new ArrayList();
 		List<Map.Entry<Chromosome, BigDecimal>> listCandidates = new ArrayList<Map.Entry<Chromosome, BigDecimal>>(population.getChromosomes().entrySet());
 		
+		// O tamanho muda de acordo com a população
 		if(id == "1") {
 			size_parentsForCrossover = ConfigurationsGA.SIZE_PARENTSFORCROSSOVER;
 			k_tournment = ConfigurationsGA.K_TOURNMENT;

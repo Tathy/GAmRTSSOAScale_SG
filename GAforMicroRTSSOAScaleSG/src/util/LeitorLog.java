@@ -11,15 +11,17 @@ public class LeitorLog {
 	
 	private String pathStruture;
 	
+	
+	
 	public LeitorLog(){
-		pathStruture = System.getProperty("user.dir").concat("/logs");
+		pathStruture = System.getProperty("user.dir").concat("\\logs");
 		//pathStruture = "/home/rubens/cluster/TesteNewGASG/logs";
 	}
-	
 
 	public ArrayList<EvalResult> processar() {
 		ArrayList<String> tempCaminhos = new ArrayList<String>();
 		File diretorio = new File(pathStruture);
+		System.out.println(pathStruture);
 		buscarParcial(diretorio, ".txt", tempCaminhos);
 		
 		/*
@@ -28,7 +30,6 @@ public class LeitorLog {
 			System.out.println(string);
 		}
 		*/
-		
 		ArrayList<EvalResult> choices = lerArquivos(tempCaminhos); 
 		
 		//remover arquivos
@@ -78,10 +79,11 @@ public class LeitorLog {
 	
 	private ArrayList<EvalResult> lerArquivos(ArrayList<String> tempCaminhos) {
 		ArrayList<EvalResult> results = new ArrayList<>();
-
 		String linha;
-
+		
+		// itera sobre todos os caminhos de arquivo
 		for(String caminhoArquivo : tempCaminhos){
+			//cria um EvalResult auxiliar
 			EvalResult tResult = new EvalResult();
 			
 			File arqTour = new File(caminhoArquivo);
@@ -92,6 +94,7 @@ public class LeitorLog {
 
 				//leitura do arquivo
 				linha = learArq.readLine();
+				System.out.println(linha);
 				
 				while(linha != null){
 					
@@ -189,6 +192,7 @@ public class LeitorLog {
         return lista;
     }
 	
+	// caminho da pasta logs, string .txt, lista vazia
 	public static ArrayList<String> buscarParcial(File arquivo, String palavra, ArrayList<String> lista) {
         if (arquivo.isDirectory()) {
             File[] subPastas = arquivo.listFiles();

@@ -30,7 +30,7 @@ public final class ConfigurationsGA {
 	
 	public static final int SIZE_TABLE_SCRIPTS_2 = 10;
 	public static final int SIZE_POPULATION_2 = 8;
-	public static final int SIZE_PARENTSFORCROSSOVER_2 = 3;
+	public static final int SIZE_PARENTSFORCROSSOVER_2 = 4;
 	public static final int K_TOURNMENT_2 = 3;
 	public static final int SIZE_ELITE_2 = 2;
 	public static final int SIZE_INVADERS_2 = 2;

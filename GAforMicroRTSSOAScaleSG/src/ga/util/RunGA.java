@@ -3,8 +3,10 @@ package ga.util;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.Map;
 
 import ga.ScriptTableGenerator.ScriptsTable;
 import ga.config.ConfigurationsGA;
+import ga.model.Chromosome;
 import ga.model.Population;
 import ga.util.Evaluation.RatePopulation;
 import ga.util.Evaluation.RatePopulations;
@@ -81,7 +84,7 @@ public class RunGA {
 					population2 = Population.getInitialPopulation(ConfigurationsGA.SIZE_POPULATION_2, scrTable2, true);
 				} else {
 					population1 = Population.getInitialPopulationCurriculum(ConfigurationsGA.SIZE_POPULATION, scrTable1, pathInitialPopulation);
-				}		
+				}	
 			
 
 				// FASE 2 = avalia a população
@@ -97,16 +100,18 @@ public class RunGA {
 					population2.fillAllCommands(pathTableScripts, "2");
 				}
 					
-				
-				/*
-			    Iterator it = population.getAllCommandsperGeneration().entrySet().iterator();
-			    while (it.hasNext()) {
-			        Map.Entry pair = (Map.Entry)it.next();
-			        int id=(Integer)pair.getKey();
-			        List<String> scripts= (List<String>) pair.getValue();
-			        System.out.println("key "+id+" "+scripts);
-			    }
-			    */
+				System.out.println("--------- POPULAÇÃO 1 inicial -------------");
+				for(Chromosome k : population1.getChromosomes().keySet() ) {
+					BigDecimal value = population1.getChromosomes().get(k);
+					System.out.print(k.getGenes() + " = " + value + "; ");
+				}
+				System.out.println();
+				System.out.println("--------- POPULAÇÃO 2 inicial -------------");
+				for(Chromosome k : population2.getChromosomes().keySet() ) {
+					BigDecimal value = population2.getChromosomes().get(k);
+					System.out.print(k.getGenes() + " = " + value + "; ");
+				}
+				System.out.println();
 			    
 				//Choose the used commands
 				if(ConfigurationsGA.removeRules==true) {
@@ -132,7 +137,7 @@ public class RunGA {
 				}
 				
 				/*
-			    Iterator it3 = population.getAllCommandsperGeneration().entrySet().iterator();
+			    Iterator it3 = population2.getAllCommandsperGeneration().entrySet().iterator();
 			    while (it3.hasNext()) {
 			        Map.Entry pair = (Map.Entry)it3.next();
 			        int id=(Integer)pair.getKey();
@@ -160,9 +165,26 @@ public class RunGA {
 			population1 = selecao1.applySelection(population1, scrTable1, pathTableScripts);
 			population2 = selecao2.applySelection(population2, scrTable2, pathTableScripts);
 
+			System.out.println("--------- POPULAÇÃO 1 (após seleção) geração " + generations +  "-------------");
+			for(Chromosome k : population1.getChromosomes().keySet() ) {
+				BigDecimal value = population1.getChromosomes().get(k);
+				System.out.print(k.getGenes() + " = " + value + "; ");
+			}
+			System.out.println();
+			System.out.println("--------- POPULAÇÃO 2 (após seleção) geração " + generations +  "-------------");
+			for(Chromosome k : population2.getChromosomes().keySet() ) {
+				BigDecimal value = population2.getChromosomes().get(k);
+				System.out.print(k.getGenes() + " = " + value + "; ");
+			}
+			System.out.println();
+
 			// Repete-se Fase 2 = Avaliaçãoo da população
-			//population1 = evalFunction.evalPopulation(population1, population2, this.generations, scrTable1, scrTable2, "1", "2");
-			//population2 = evalFunction.evalPopulation(population2, population1, this.generations, scrTable2, scrTable1, "2", "1");
+			ArrayList<Population> populations = new ArrayList<>();
+			populations.add(population1);
+			populations.add(population2);
+			//populations = evalFunction.evalPopulation(populations, this.generations, scrTable1, scrTable2, "1", "2");
+			population1 = populations.get(0);
+			population1 = populations.get(1);
 			
 			//Get all the used commands
 			if(ConfigurationsGA.removeRules==true) {
@@ -204,6 +226,7 @@ public class RunGA {
 		}
 		
 		f1.close();
+		f2.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
