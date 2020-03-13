@@ -14,14 +14,13 @@ public class LeitorLog {
 	
 	
 	public LeitorLog(){
-		pathStruture = System.getProperty("user.dir").concat("\\logs");
+		pathStruture = System.getProperty("user.dir").concat("/logs");
 		//pathStruture = "/home/rubens/cluster/TesteNewGASG/logs";
 	}
 
 	public ArrayList<EvalResult> processar() {
 		ArrayList<String> tempCaminhos = new ArrayList<String>();
 		File diretorio = new File(pathStruture);
-		System.out.println(pathStruture);
 		buscarParcial(diretorio, ".txt", tempCaminhos);
 		
 		/*
@@ -42,6 +41,7 @@ public class LeitorLog {
 	public ArrayList<EvalResult> processarIterative() {
 		ArrayList<String> tempCaminhos = new ArrayList<String>();
 		File diretorio = new File(pathStruture);
+		// Lista arquivos da pasta logs
 		buscarParcial(diretorio, ".txt", tempCaminhos);
 		
 		/*
@@ -52,6 +52,7 @@ public class LeitorLog {
 		*/
 		
 		//remove files without winner
+		// itera sobre todos os arquivos da pasta logs, verifica quais arquivos não possuem vencedores, coloca só partidas com vencedores na matchsToProcessPath
 		ArrayList<String> matchsToProcessPath = new ArrayList<String>();
 		for (String path : tempCaminhos) {
 			if(hasResult(path)){
@@ -59,7 +60,8 @@ public class LeitorLog {
 			}
 		}
 		
-		ArrayList<EvalResult> choices = lerArquivos(matchsToProcessPath); 
+		// Monta lista de resultados com IA1 e IA2 com String ID do script, e Evaluation com inteiro do resultado (0, 1 ou -1)
+		ArrayList<EvalResult> choices = lerArquivos(matchsToProcessPath);
 		
 		//remover arquivos
 		removerArquivos(matchsToProcessPath);
@@ -76,13 +78,14 @@ public class LeitorLog {
 		}
 	}
 	
-	
+	// Recebe lista de arquivos que possuem vencedor na pasta logs
 	private ArrayList<EvalResult> lerArquivos(ArrayList<String> tempCaminhos) {
 		ArrayList<EvalResult> results = new ArrayList<>();
 		String linha;
 		
 		// itera sobre todos os caminhos de arquivo
 		for(String caminhoArquivo : tempCaminhos){
+			
 			//cria um EvalResult auxiliar
 			EvalResult tResult = new EvalResult();
 			
@@ -94,22 +97,23 @@ public class LeitorLog {
 
 				//leitura do arquivo
 				linha = learArq.readLine();
-				System.out.println(linha);
 				
 				while(linha != null){
 					
 					if(linha.startsWith("Tupla A1 =")){
 						String item = linha.replace("Tupla A1 =", "");
 						tResult.setIA1(item.trim());
+						System.out.println("Jogador 1: " + tResult.getIA1());
 					}
 					if(linha.startsWith("Tupla A2 =")){
 						String item = linha.replace("Tupla A2 =", "");
 						tResult.setIA2(item.trim());
+						System.out.println("Jogador 2: " + tResult.getIA2());
 					}
 					if(linha.startsWith("Winner")){
 						String item = linha.replace("Winner", "").trim();
 						tResult.setEvaluation(Integer.decode(item));
-						
+						System.out.println("Resultado da partida: " + tResult.getEvaluation());
 					}
 										
 					linha = learArq.readLine();
@@ -204,6 +208,7 @@ public class LeitorLog {
         }
         else if (arquivo.getName().equalsIgnoreCase(palavra)) lista.add(arquivo.getAbsolutePath());
         else if (arquivo.getName().contains(palavra)) lista.add(arquivo.getAbsolutePath());
+        
         return lista;
     }
 

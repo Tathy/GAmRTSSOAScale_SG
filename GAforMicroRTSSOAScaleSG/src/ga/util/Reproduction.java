@@ -916,7 +916,7 @@ public class Reproduction {
 		
 	}
 	
-	public static void addLineFile(String data, String id) {
+	public void addLineFile(String data, String id) {
 	    try{    
 	
 	        File file = new File(pathTableScripts + "ScriptsTable" + id + ".txt");    
@@ -938,6 +938,7 @@ public class Reproduction {
 	        e.printStackTrace();    
 	    } 
 	}
+	
 	
 	public String recoverStringFromArray(String [] parts)
 	{

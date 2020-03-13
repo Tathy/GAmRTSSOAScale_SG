@@ -53,8 +53,6 @@ public class RunTests {
 		//rodamos o GA
 		Population popFinal = ga.run(fEval);
 		
-		//popFinal.printWithValue();
-		
 		//Fase 6 - mostrar os mais aptos na população final
 		
 		//Fase 7 - finalizar 

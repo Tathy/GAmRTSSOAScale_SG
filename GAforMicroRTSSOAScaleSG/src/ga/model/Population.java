@@ -160,14 +160,14 @@ public class Population {
 			
 			newChromosomes.put(tChom, BigDecimal.ZERO);
 		}
-		
+		/*
 		System.out.println("Lista do newChromosome popula��o 2:");
 		for(Chromosome k : newChromosomes.keySet() ) {
 			BigDecimal value = newChromosomes.get(k);
 			System.out.print(k.getGenes() + " = " + value + "; ");
 		}
 		System.out.println();
-		
+		*/
 		Population pop = new Population(newChromosomes);
 		return pop;
 	}

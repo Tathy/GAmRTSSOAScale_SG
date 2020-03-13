@@ -65,7 +65,6 @@ public class RunGA {
 			} else {
 				scrTable1 = scrTable1.generateScriptsTableRecover();
 			}
-			
 		//}while(scrTable.checkDiversityofTypes());
 		scrTable1.setCurrentSizeTable(scrTable1.getScriptTable().size());
 		scrTable2.setCurrentSizeTable(scrTable2.getScriptTable().size());
@@ -85,7 +84,21 @@ public class RunGA {
 				} else {
 					population1 = Population.getInitialPopulationCurriculum(ConfigurationsGA.SIZE_POPULATION, scrTable1, pathInitialPopulation);
 				}	
-			
+				
+				
+				System.out.println("--------- POPULAÇÃO 1 inicial " +  "-------------");
+				for(Chromosome k : population1.getChromosomes().keySet() ) {
+					BigDecimal value = population1.getChromosomes().get(k);
+					System.out.print(k.getGenes() + " = " + value + "; ");
+				}
+				System.out.println();
+				System.out.println("--------- POPULAÇÃO 2 inicial " +  "-------------");
+				for(Chromosome k : population2.getChromosomes().keySet() ) {
+					BigDecimal value = population2.getChromosomes().get(k);
+					System.out.print(k.getGenes() + " = " + value + "; ");
+				}
+				System.out.println();
+				
 
 				// FASE 2 = avalia a população
 				//population1 = evalFunction.evalPopulation(population1, population2, this.generations, scrTable1, scrTable2, "1", "2"); //custer (descomentar para teste local que o Rubens ensinou)
@@ -99,7 +112,7 @@ public class RunGA {
 					population1.fillAllCommands(pathTableScripts, "1");
 					population2.fillAllCommands(pathTableScripts, "2");
 				}
-					
+				/*	
 				System.out.println("--------- POPULAÇÃO 1 inicial -------------");
 				for(Chromosome k : population1.getChromosomes().keySet() ) {
 					BigDecimal value = population1.getChromosomes().get(k);
@@ -112,7 +125,7 @@ public class RunGA {
 					System.out.print(k.getGenes() + " = " + value + "; ");
 				}
 				System.out.println();
-			    
+			    */
 				//Choose the used commands
 				if(ConfigurationsGA.removeRules==true) {
 					population1.chooseusedCommands(pathUsedCommands, "1");
@@ -162,29 +175,31 @@ public class RunGA {
 			Selection selecao1 = new Selection();
 			Selection selecao2 = new Selection(); 
 			// Retorna a nova população após todos os processos envolvidos na reprodução para a próxima geração
-			population1 = selecao1.applySelection(population1, scrTable1, pathTableScripts);
-			population2 = selecao2.applySelection(population2, scrTable2, pathTableScripts);
-
-			System.out.println("--------- POPULAÇÃO 1 (após seleção) geração " + generations +  "-------------");
-			for(Chromosome k : population1.getChromosomes().keySet() ) {
-				BigDecimal value = population1.getChromosomes().get(k);
-				System.out.print(k.getGenes() + " = " + value + "; ");
+			if(generations != 0) {
+				population1 = selecao1.applySelection(population1, scrTable1, pathTableScripts);
+				population2 = selecao2.applySelection(population2, scrTable2, pathTableScripts);
 			}
-			System.out.println();
-			System.out.println("--------- POPULAÇÃO 2 (após seleção) geração " + generations +  "-------------");
-			for(Chromosome k : population2.getChromosomes().keySet() ) {
-				BigDecimal value = population2.getChromosomes().get(k);
-				System.out.print(k.getGenes() + " = " + value + "; ");
-			}
-			System.out.println();
 
 			// Repete-se Fase 2 = Avaliaçãoo da população
 			ArrayList<Population> populations = new ArrayList<>();
 			populations.add(population1);
 			populations.add(population2);
-			//populations = evalFunction.evalPopulation(populations, this.generations, scrTable1, scrTable2, "1", "2");
+			populations = evalFunction.evalPopulation(populations, this.generations, scrTable1, scrTable2, "1", "2");
 			population1 = populations.get(0);
-			population1 = populations.get(1);
+			population2 = populations.get(1);
+			
+			System.out.println("--------- POPULAÇÃO 1 após avaliação " + generations +  "-------------");
+			for(Chromosome k : population1.getChromosomes().keySet() ) {
+				BigDecimal value = population1.getChromosomes().get(k);
+				System.out.print(k.getGenes() + " = " + value + "; ");
+			}
+			System.out.println();
+			System.out.println("--------- POPULAÇÃO 2 após avaliação " + generations +  "-------------");
+			for(Chromosome k : population2.getChromosomes().keySet() ) {
+				BigDecimal value = population2.getChromosomes().get(k);
+				System.out.print(k.getGenes() + " = " + value + "; ");
+			}
+			System.out.println();
 			
 			//Get all the used commands
 			if(ConfigurationsGA.removeRules==true) {
@@ -208,7 +223,7 @@ public class RunGA {
 			//Remove used commands from all commands
 			if(ConfigurationsGA.removeRules==true) {
 				population1.removeCommands(scrTable1);
-				population1.removeCommands(scrTable1);
+				population2.removeCommands(scrTable2);
 			}
 
 			// atualiza a geração
@@ -223,6 +238,7 @@ public class RunGA {
 				Log_Facade.shrinkRewardTable();
 				System.out.println("call shrink");
 			}
+			
 		}
 		
 		f1.close();
@@ -232,7 +248,14 @@ public class RunGA {
 			e.printStackTrace();
 		}
 
-		return population1;
+		
+		System.out.println("--------- POPULAÇÃO 2 final -------------");
+		for(Chromosome k : population2.getChromosomes().keySet() ) {
+			BigDecimal value = population2.getChromosomes().get(k);
+			System.out.print(k.getGenes() + " = " + value + "; ");
+		}
+	    
+		return population2;
 	}
 
 	private boolean resetPopulation(Population population2) {

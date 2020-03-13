@@ -1012,13 +1012,12 @@ public ScriptsTable generateScriptsTableMutation(int size){
 		if(scriptsTable.containsKey(tChom)){
 			return tChom;			
 		} else {
-			// Caso o novo cromossomo gerado n�o tenha equivalente na scrTable, ele � adicionado no final, com ID = tamanho atual da tabela de scripts
-			//System.out.println("beforeMutateScript "+cromScriptOriginal);
-			//System.out.println("afterMutateScript "+cromScript);
+			// Caso o novo cromossomo gerado não tenha equivalente na scrTable, ele é adicionado no final, com ID = tamanho atual da tabela de scripts
 			int newId = scriptsTable.size();
 			scriptsTable.put(tChom, BigDecimal.valueOf(newId));
 			setCurrentSizeTable(scriptsTable.size());
-			Reproduction.addLineFile(newId + " " + tChom, id);
+			Reproduction rp = new Reproduction(null, this, System.getProperty("user.dir").concat("/Table/"));
+			rp.addLineFile(newId + " " + tChom, id);
 			return tChom;
 		}
 		
