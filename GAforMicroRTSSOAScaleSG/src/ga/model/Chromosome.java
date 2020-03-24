@@ -6,8 +6,8 @@ import java.util.ArrayList;
 /**
  * 
  * @author rubens
- * Os genes dos cromossomos serão correspondentes aos scripts que serão utilizados no portfólio.
- * Os genes serão representados como números inteiros iniciando em 0. 
+ * Os genes dos cromossomos serï¿½o correspondentes aos scripts que serï¿½o utilizados no portfï¿½lio.
+ * Os genes serï¿½o representados como nï¿½meros inteiros iniciando em 0. 
  * Cada gene corresponde a um script da classe BasicExpandedConfigurableScript
  */
 public class Chromosome {
@@ -30,13 +30,13 @@ public class Chromosome {
 	}
 	
 	public void print(PrintWriter f0){
-		System.out.print("Chromosome ");
+		//System.out.print("Chromosome ");
 		f0.print("Chromosome ");
 		for (Integer gene : Genes) {
-			System.out.print(gene+" ");
+			//System.out.print(gene+" ");
 			f0.print(gene+" ");
 		}
-		System.out.println("");
+		//System.out.println("");
 		f0.println("");
 	}
 

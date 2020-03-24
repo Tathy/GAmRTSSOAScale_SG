@@ -7,11 +7,11 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/MicroRTSinterface"/>
-	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/hsqldb.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/javax.persistence-2.1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/jdom.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/junit-4.12.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/minimal-json-0.9.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/tassi/git/GAmRTSSOAScale_SG/GAforMicroRTSSOAScaleSG/lib/weka.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/lib GA/hsqldb.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/lib GA/javax.persistence-2.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/lib GA/jdom.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/lib GA/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/lib GA/minimal-json-0.9.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/tassi/git/lib GA/weka.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

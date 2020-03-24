@@ -31,7 +31,6 @@ import ga.util.PreSelection;
 import model.EvalResult;
 import rts.units.UnitTypeTable;
 import util.LeitorLog;
-import util.LeitorLogID;
 
 public class RoundRobinEliteandSampleIterativeEval implements RatePopulations {
 	// CONSTANTES
@@ -199,6 +198,10 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulations {
         		updateChromo(pop, evalResult.getIA1(), new BigDecimal(0.5));
         	else if(id == "1" && !evalResult.getIA2().contains("("))
         		updateChromo(pop, evalResult.getIA2(), new BigDecimal(0.5));
+        	if(id == "1") {
+	        	System.out.println("Empate!");
+	        	System.out.println("---------------------------");
+        	}
         }
 		
 		if(counterLinesLogsGrammar < maxLinesLogsGrammar){
@@ -356,7 +359,7 @@ public class RoundRobinEliteandSampleIterativeEval implements RatePopulations {
 		
 		// atualizar valores das populacoes
 		if(resultados.size() > 0 ){
-			 populations = updatePopulationValue(resultados, populations, id1, id2);
+			 populations = updatePopulationValue(resultados, populations, id1, id2);		// TATHY VOCE ESTA AQUI
 		}
 		
 		return populations;

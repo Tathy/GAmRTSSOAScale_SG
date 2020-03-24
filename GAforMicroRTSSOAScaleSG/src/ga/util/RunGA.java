@@ -32,7 +32,7 @@ public class RunGA {
 	private ScriptsTable scrTable2;
 	
 	private final String pathTableScripts = System.getProperty("user.dir").concat("/Table/");
-	//private final String pathLogs = System.getProperty("user.dir").concat("/Tracking/");
+	private final String pathLogs = System.getProperty("user.dir").concat("/Tracking/");
 	private final String pathInitialPopulation = System.getProperty("user.dir").concat("/InitialPopulation/");
 	private final String pathUsedCommands = System.getProperty("user.dir").concat("/commandsUsed/");
 	
@@ -72,9 +72,8 @@ public class RunGA {
 		PrintWriter f1;
 		PrintWriter f2;
 		try {
-			////f0 = new PrintWriter(new FileWriter(pathLogs+"Tracking.txt")); //trocar
-			f1 = new PrintWriter(new FileWriter("Tracking1.txt")); // Arquivo onde a primeira população vai ser salva
-			f2 = new PrintWriter(new FileWriter("Tracking2.txt")); // Arquivo onde a segunda população vai ser salva
+			f1 = new PrintWriter(new FileWriter(pathLogs+"Tracking1.txt")); // Arquivo onde a primeira população vai ser salva
+			f2 = new PrintWriter(new FileWriter(pathLogs+"Tracking2.txt")); // Arquivo onde a segunda população vai ser salva
 
 			//do {	//cluster
 				// FASE 1 = gerar a população inicial
@@ -104,7 +103,8 @@ public class RunGA {
 				//population1 = evalFunction.evalPopulation(population1, population2, this.generations, scrTable1, scrTable2, "1", "2"); //custer (descomentar para teste local que o Rubens ensinou)
 				//population2 = evalFunction.evalPopulation(population2, population1, this.generations, scrTable2, scrTable1, "2", "1");
 				
-				//population.printWithValue(f0);
+				population1.printWithValue(f1);
+				population2.printWithValue(f2);
 				//System.out.println("sep");
 				
 				//Get all the used commands
@@ -161,8 +161,10 @@ public class RunGA {
 				
 			    // Impressão dos indivíduos da população e seus valores de avaliação após partidas no cluster
 				//System.out.println("Log - Generation = " + this.generations);
-				//f0.println("Log - Generation = " + this.generations);
-				//population.printWithValue(f0);
+				f1.println("Log - Generation = " + this.generations);
+				f2.println("Log - Generation = " + this.generations);
+				population1.printWithValue(f1);
+				population1.printWithValue(f2);
 				
 			//} while (resetPopulation(population1) && resetPopulation(population2));	//cluster
 
@@ -230,8 +232,10 @@ public class RunGA {
 			updateGeneration();
 
 			//System.out.println("Log - Generation = " + this.generations);
-			//f0.println("Log - Generation = " + this.generations);
-			//population.printWithValue(f0);
+			f1.println("Log - Generation = " + this.generations);
+			population1.printWithValue(f1);
+			f2.println("Log - Generation = " + this.generations);
+			population2.printWithValue(f2);
 			
 			if(ConfigurationsGA.UCB1==true)
 			{

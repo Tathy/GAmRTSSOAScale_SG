@@ -27,7 +27,7 @@ public final class ConfigurationsGA {
 	public static final boolean curriculum = false;
 	public final static boolean UCB1=false;
 	
-	public static final int QTD_GENERATIONS = 5;
+	public static final int QTD_GENERATIONS = 1;
 	
 	public static final int SIZE_TABLE_SCRIPTS_2 = 10;
 	public static final int SIZE_POPULATION_2 = 5; //8
