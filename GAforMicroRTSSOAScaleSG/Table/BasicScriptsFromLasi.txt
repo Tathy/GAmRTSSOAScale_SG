@@ -1,0 +1,1 @@
+[attack(Worker,closest), harvest(50), moveToUnit(Worker,Ally,mostHealthy), attack(Worker,mostHealthy), moveToUnit(Worker,Ally,lessHealthy), train(Worker,50,Down), moveToUnit(Worker,Ally,farthest), train(Worker,50,Up), train(Worker,50,Left), attack(Worker,lessHealthy), attack(Worker,farthest)]

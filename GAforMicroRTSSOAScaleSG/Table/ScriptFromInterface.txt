@@ -1,0 +1,1 @@
+attack(Ranged,closest) attack(Heavy,closest)
