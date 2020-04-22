@@ -572,7 +572,8 @@ public class ScriptsTable {
 		//basicFunction = basicFunction + functionChosen + "(";
 		
 		//basicFunction = basicFunction.substring(0, basicFunction.length() - 1);
-		basicFunction = functionChosen+" ";
+		basicFunction = functionChosen + " ";
+		//System.out.println(basicFunction);
 		//System.out.println("(returnBasicFunctionLasi) basicFunction: " + basicFunction);
 		
 		return basicFunction;
@@ -649,7 +650,8 @@ public class ScriptsTable {
 		//conditional = conditional + functionChosen + "(";
 
 		//conditional = conditional.substring(0, conditional.length() - 1);
-		conditional = "if("+functionChosen+") ";
+		conditional="if("+functionChosen+") ";
+		//System.out.println(conditional);
 		//System.out.println("(returnConditionalLasi) conditional: " + conditional);
 		return conditional;
 	}
@@ -915,7 +917,7 @@ public class ScriptsTable {
 		//conditional=conditional+functionChosen + "(";
 		
 		//conditional=conditional.substring(0, conditional.length() - 1);
-		conditional="if("+functionChosen+")";	
+		conditional="if("+functionChosen+")";
 		//System.out.println("(returnConditionalCleanLasi) conditional Clean: " + conditional);
 		//return conditional+")";
 		return conditional;

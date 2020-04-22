@@ -367,8 +367,7 @@ public class Sketch {
 		return genotypeScript.trim();
 	}
 	
-	
-public String sketchLasi(String genotypeScript,int numberComponentsAdded) {
+	public String sketchLasi(String genotypeScript,int numberComponentsAdded) {
 		
 		boolean canCloseParenthesisIf=false;
 		boolean canOpenParenthesisIf=false;
@@ -376,53 +375,68 @@ public String sketchLasi(String genotypeScript,int numberComponentsAdded) {
 		List<itemIf> collectionofIfs= new ArrayList<itemIf>();
 		int continueCoin=0;
 		boolean isOpenFor=false;
-		
-		do{
+		do
+		{
 			int coin=rand.nextInt(3);
-			
-			// ----- for
-			if(coin==0 && isOpenFor==false && collectionofIfs.size()==0){
+			//for
+			if(coin==0 && isOpenFor==false && collectionofIfs.size()==0)
+			{
 				collectionofIfs.add(new itemIf(0,true,"for"));
-				genotypeScript = genotypeScript + st.returnForFunction();
-				isOpenFor = true;
+				genotypeScript=genotypeScript+st.returnForFunction();
+				isOpenFor=true;
 				numberComponentsAdded++;
-				canCloseParenthesisIf = false;
-				canOpenParenthesisIf = false;
+				canCloseParenthesisIf=false;
+				canOpenParenthesisIf=false;
 
-				if(collectionofIfs.size()>0){
+				if(collectionofIfs.size()>0)
+				{
 					for (int i = collectionofIfs.size()-1; i >= 0; i-- ) {
-						if(collectionofIfs.get(i).isLastOpen()==false){
+
+						if(collectionofIfs.get(i).isLastOpen()==false)
+						{
 							collectionofIfs.remove(i);
-						} else {
+
+						}
+						else
+						{
 							break;
 						}
 					}
 				}
+				
 			}
 
-			// ----- basic function
+			//basic function
 			
-			else if(coin==1) {
-				//genotypeScript = genotypeScript+st.returnBasicFunction(isOpenFor);
-				genotypeScript = genotypeScript+st.returnBasicFunctionLasi(isOpenFor);
+			else if(coin==1)
+			{
+				genotypeScript=genotypeScript+st.returnBasicFunctionLasi(isOpenFor);
 				numberComponentsAdded++;
 				canCloseParenthesisIf=true;
 				canOpenParenthesisIf=false;
 
-				if(collectionofIfs.size()>0){
+				if(collectionofIfs.size()>0)
+				{
 					for (int i = collectionofIfs.size()-1; i >= 0; i-- ) {
-						if(collectionofIfs.get(i).isLastOpen()==false){
+
+						if(collectionofIfs.get(i).isLastOpen()==false)
+						{
 							collectionofIfs.remove(i);
-						} else {
+
+						}
+						else
+						{
 							break;
 						}
 					}
 				}
+
+
 			}
+			//conditional
 			
-			// ----- conditional
-			
-			else if(coin==2 && counterIfsOpen(collectionofIfs)==0){
+			else if(coin==2 && counterIfsOpen(collectionofIfs)==0)
+			{
 				collectionofIfs.add(new itemIf(1,true,"if"));
 				genotypeScript=genotypeScript+st.returnConditionalLasi(isOpenFor);
 				genotypeScript=genotypeScript+"(";
@@ -529,5 +543,6 @@ public String sketchLasi(String genotypeScript,int numberComponentsAdded) {
 
 		return genotypeScript.trim();
 	}
+	
 	
 }

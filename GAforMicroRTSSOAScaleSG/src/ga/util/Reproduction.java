@@ -198,7 +198,7 @@ public class Reproduction {
 	
 	public Population CrossoverSingleScript(String id){
 		Population newGeneration;
-		HashMap<Chromosome, BigDecimal> newChromosomes = new HashMap<Chromosome, BigDecimal>();
+		HashMap<Chromosome, BigDecimal> newChromosomes = new HashMap<Chromosome, BigDecimal>();		
 		int numberEliteMutated, size_elite, size_population, size_invaders;
 		
 		if(id == "1") {
@@ -213,114 +213,114 @@ public class Reproduction {
 			size_invaders = ConfigurationsGA.SIZE_INVADERS_2;
 		}
 		
-		while(newChromosomes.size() < (size_population - size_elite - size_invaders - numberEliteMutated)) {
+		while(newChromosomes.size() < (size_population - size_elite - size_invaders - numberEliteMutated)){
 			//here we shuffle the list of parents in order to select always two different parents to reproduce
 			Collections.shuffle(parents);
 			Chromosome parent1=parents.get(0).getKey();
 			Chromosome parent2=parents.get(1).getKey();
-			//System.out.println("parent1 "+parent1.getGenes());
-			//System.out.println("parent2 "+parent2.getGenes());
+//			System.out.println("parent1 "+parent1.getGenes());
+//			System.out.println("parent2 "+parent2.getGenes());
 			
-			// Corta scripts em pedaços que definem cada gene (?)
-			String [] parentGenotype1 = recoverParentStringParts(parent1.getGenes().get(0));
-			String [] parentGenotype2 = recoverParentStringParts(parent2.getGenes().get(0));
+			String [] parentGenotype1=recoverParentStringParts(parent1.getGenes().get(0));
+			String [] parentGenotype2=recoverParentStringParts(parent2.getGenes().get(0));
 			
-			Chromosome child1 = new Chromosome();
-			Chromosome child2 = new Chromosome();
-			ArrayList <String> childGenotype1 = new ArrayList<>();
-			ArrayList <String> childGenotype2 = new ArrayList<>();
+			Chromosome child1= new Chromosome();
+			Chromosome child2= new Chromosome();
+			ArrayList <String> childGenotype1=new ArrayList<>();
+			ArrayList <String> childGenotype2=new ArrayList<>();
 
 			//The uniform crossover add to the son one of the parents gene for each position (selected randomly)
-			int sizeParent1 = parentGenotype1.length;
-			int sizeParent2 = parentGenotype2.length;
+			int sizeParent1=parentGenotype1.length;
+			int sizeParent2=parentGenotype2.length;
 			
 			int breakParent1;
 			int breakParent2;
 			
-			// definindo valores dos breakParents
-			if(sizeParent1 > 1) {
-				breakParent1 = rand.nextInt(sizeParent1+1);
-			} else {
-				breakParent1 = 0;
+			if(sizeParent1>1)
+			{
+				breakParent1=rand.nextInt(sizeParent1+1);
 			}
-			
-			if(sizeParent2>1) {
-				breakParent2 = rand.nextInt(sizeParent2+1);
-			} else {
+			else
+			{
+				breakParent1=0;
+			}
+			if(sizeParent2>1)
+			{
+				breakParent2=rand.nextInt(sizeParent2+1);
+			}
+			else
+			{
 				breakParent2=0;
 			}
 			
-			ArrayList<String> p1sub1 = new ArrayList<>();
-			ArrayList<String> p1sub2 = new ArrayList<>();
-			ArrayList<String> p2sub1 = new ArrayList<>();
-			ArrayList<String> p2sub2 = new ArrayList<>();
+			ArrayList<String> p1sub1= new ArrayList<>();
+			ArrayList<String> p1sub2= new ArrayList<>();
+			ArrayList<String> p2sub1= new ArrayList<>();
+			ArrayList<String> p2sub2= new ArrayList<>();
 
-			// adicionando genes aos p_sub_s
-			for(int i=0;i<breakParent1;i++){
+			
+			
+			for(int i=0;i<breakParent1;i++)
+			{
 				p1sub1.add(parentGenotype1[i]);
 			}
-			
-			for(int i=breakParent1;i<sizeParent1;i++){
+			for(int i=breakParent1;i<sizeParent1;i++)
+			{
 				p1sub2.add(parentGenotype1[i]);
 			}
 			
-			for(int i=0;i<breakParent2;i++){
+			for(int i=0;i<breakParent2;i++)
+			{
 				p2sub1.add(parentGenotype2[i]);
 			}
-			
-			for(int i=breakParent2;i<sizeParent2;i++){
+			for(int i=breakParent2;i<sizeParent2;i++)
+			{
 				p2sub2.add(parentGenotype2[i]);
 			}	
 			
-			/*
-			System.out.println("p1sub1");
-			p1sub1.forEach(System.out::println);
-			
-			System.out.println("p1sub2");
-			p1sub2.forEach(System.out::println);
-			
-			System.out.println("p2sub1");
-			p2sub1.forEach(System.out::println);
-			
-			System.out.println("p2sub2");
-			p2sub2.forEach(System.out::println);
-			*/
-			
-			// Adiciona pedaços de cada pai ao filho 1
+//			System.out.println("p1sub1");
+//			p1sub1.forEach(System.out::println);
+//			
+//			System.out.println("p1sub2");
+//			p1sub2.forEach(System.out::println);
+//			
+//			System.out.println("p2sub1");
+//			p2sub1.forEach(System.out::println);
+//			
+//			System.out.println("p2sub2");
+//			p2sub2.forEach(System.out::println);
+
 			childGenotype1.addAll(p1sub1);
 			childGenotype1.addAll(p2sub2);
 			String[] arrchildGenotype1 = childGenotype1.toArray(new String[childGenotype1.size()]);
 			
-			// Adiciona pedaços de cada pai ao filho 2
 			childGenotype2.addAll(p1sub2);
 			childGenotype2.addAll(p2sub1);
 			String[] arrchildGenotype2 = childGenotype2.toArray(new String[childGenotype2.size()]);
 			
-			/*
-			System.out.println("childGenotype1");
-			childGenotype1.forEach(System.out::println);
-			
-			System.out.println("childGenotype2");
-			childGenotype2.forEach(System.out::println);
-			*/
+//			System.out.println("childGenotype1");
+//			childGenotype1.forEach(System.out::println);
+//			
+//			System.out.println("childGenotype2");
+//			childGenotype2.forEach(System.out::println);
 
-			String childConcatenated1 = recoverStringFromArray(arrchildGenotype1);
-			childConcatenated1 = childConcatenated1.trim();
-			String childConcatenated2 = recoverStringFromArray(arrchildGenotype2);
-			childConcatenated2 = childConcatenated2.trim();
+			String childConcatenated1=recoverStringFromArray(arrchildGenotype1);
+			childConcatenated1=childConcatenated1.trim();
+			String childConcatenated2=recoverStringFromArray(arrchildGenotype2);
+			childConcatenated2=childConcatenated2.trim();
 			
-			//System.out.println("childConcatenated1 " + childConcatenated1);
-			//System.out.println("childConcatenated2 " + childConcatenated2);
+//			System.out.println("childConcatenated1"+childConcatenated1);
+//			System.out.println("childConcatenated2"+childConcatenated2);
 			
 			int newId;
-			// Caso o filho 1 gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
-			if(scrTable.getScriptTable().containsKey(childConcatenated1)){
-				newId = scrTable.getScriptTable().get(childConcatenated1).intValue();
+			if(scrTable.getScriptTable().containsKey(childConcatenated1))
+			{
+				newId= scrTable.getScriptTable().get(childConcatenated1).intValue();
 				//System.out.println("oldId1 "+ newId);
 				child1.addGene(newId);
 			}
-			// Caso o filho 1 gerado não tenha equivalente na scrTable, ele é adicionado no final, com ID = tamanho atual da tabela de scripts
-			else if(!scrTable.getScriptTable().containsKey(childConcatenated1) && childConcatenated1.length()>0){
+			else if(!scrTable.getScriptTable().containsKey(childConcatenated1) && childConcatenated1.length()>0)
+			{
 				//System.out.println("beforeMutateScript "+cromScriptOriginal);
 				//System.out.println("afterMutateScript "+cromScript);
 				newId=scrTable.getScriptTable().size();
@@ -331,13 +331,15 @@ public class Reproduction {
 				child1.addGene(newId);
 			}
 			
-			// O processo de adição do filho 2 é igual ao do filho 1
-			if(scrTable.getScriptTable().containsKey(childConcatenated2)){
+			
+			if(scrTable.getScriptTable().containsKey(childConcatenated2))
+			{
 				newId= scrTable.getScriptTable().get(childConcatenated2).intValue();
 				//System.out.println("oldId2 "+ newId);
 				child2.addGene(newId);
 			}
-			else if(!scrTable.getScriptTable().containsKey(childConcatenated2) && childConcatenated2.length()>0){
+			else if(!scrTable.getScriptTable().containsKey(childConcatenated2) && childConcatenated2.length()>0)
+			{
 				//System.out.println("beforeMutateScript "+cromScriptOriginal);
 				//System.out.println("afterMutateScript "+cromScript);
 				newId=scrTable.getScriptTable().size();
@@ -351,7 +353,8 @@ public class Reproduction {
 			//The next method is just for avoiding infinite loops, adding a random element if
 			//one with the same key was already added (this can happen because sometimes the resulting
 			//element has the same KEY, and produce that the size of the map be always the same) 
-			if(newChromosomes.containsKey(child1)){
+			if(newChromosomes.containsKey(child1))
+			{
 				Chromosome tChom = new Chromosome();
 				int sizeCh=rand.nextInt(ConfigurationsGA.SIZE_CHROMOSOME)+1;
 				for (int j = 0; j < sizeCh; j++) {
@@ -360,7 +363,8 @@ public class Reproduction {
 				newChromosomes.put(tChom, BigDecimal.ZERO);
 			}
 			
-			if(newChromosomes.containsKey(child2)){
+			if(newChromosomes.containsKey(child2))
+			{
 				Chromosome tChom = new Chromosome();
 				int sizeCh=rand.nextInt(ConfigurationsGA.SIZE_CHROMOSOME)+1;
 				for (int j = 0; j < sizeCh; j++) {
@@ -369,8 +373,8 @@ public class Reproduction {
 				newChromosomes.put(tChom, BigDecimal.ZERO);
 			}
 			
-			//System.out.println("child1 "+child1.getGenes());
-			//System.out.println("child2 "+child2.getGenes());
+//			System.out.println("child1 "+child1.getGenes());
+//			System.out.println("child2 "+child2.getGenes());
 
 			//here is added the child!
 			if(child1.getGenes().size()!=0)
@@ -379,8 +383,7 @@ public class Reproduction {
 			if(child2.getGenes().size()!=0)
 				newChromosomes.put(child2, BigDecimal.ZERO);
 		}
-		
-		newGeneration = new Population(newChromosomes);
+		newGeneration=new Population(newChromosomes);
 		return newGeneration;
 	}
 
@@ -817,8 +820,9 @@ public class Reproduction {
 							//candidates[i] = objScriptTable.returnBasicFunctionClean(true);
 						
 							candidates[i] = objScriptTable.returnBasicFunctionCleanLasi(true);
-							//if(!candidates[i].contains("u"))
-							//	candidates[i] = candidates[i].replace(")", ",u)");
+							if(!candidates[i].contains("u"))
+								if(!candidates[i].contains("train"))
+									candidates[i] = candidates[i].replace(")", ",u)");
 							
 						//} else {
 							// Retorna uma nova função básica de acordo com a funçãoo antiga, trocando os parâmetros
@@ -864,8 +868,10 @@ public class Reproduction {
 								// Retorna uma nova fun��o condicional totalmente aleat�ria, respeitando apenas a presen�a ou n�o do for u
 								//candidates[i]=objScriptTable.returnConditionalClean(true);
 								candidates[i] = objScriptTable.returnConditionalCleanLasi(true);
-								//if(!candidates[i].contains("u"))
-								//	candidates[i] = candidates[i].replace(")", ",u)");
+								if(!candidates[i].contains("u"))
+									if(!candidates[i].contains("HaveQtdEnemiesbyType") && !candidates[i].contains("HaveQtdUnitsAttacking") && !candidates[i].contains("HaveQtdUnitsbyType")
+											&& !candidates[i].contains("HaveQtdUnitsHarversting") )
+										candidates[i] = candidates[i].replace(")", ",u)");
 							//} else {
 								// Retorna uma nova fun��o b�sica de acordo com a fun��o antiga, trocando os par�metros
 							//	candidates[i]=objScriptTable.returnConditionalCleanSame(true,originals[i]);
