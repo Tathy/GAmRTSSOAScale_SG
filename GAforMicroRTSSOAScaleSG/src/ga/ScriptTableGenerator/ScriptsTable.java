@@ -157,6 +157,37 @@ public class ScriptsTable {
 		return st;
 	}
 	
+	public ScriptsTable generateScriptsTableLasi(int size){
+		HashMap<String, BigDecimal> newChromosomes = new HashMap<>();
+		String tChom;
+		PrintWriter f0;
+		
+		try {
+			
+			f0 = new PrintWriter(new FileWriter(pathTableScripts+"ScriptsTable" + this.id + ".txt"));
+			int i = 0;
+			while(i<size) {
+				// Sorteia um script de uma tabela menor (definida pelo lasi)
+				tChom = buildScriptLasi();
+
+				// Não aceita cromossomos repetidos
+				if(!newChromosomes.containsKey(tChom)) {
+					newChromosomes.put(tChom, BigDecimal.valueOf(i));
+					f0.println(i+" "+tChom);
+					i++;
+				}
+			}
+			
+			f0.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+
+		ScriptsTable st = new ScriptsTable(newChromosomes,pathTableScripts, this.id);
+		return st;
+	}
+	
 	public ScriptsTable generateScriptsTableMutation(int size){
 		
 		// Script gerado com a interface é lido no arquivo e colocado no newChromosomes com key = 0
@@ -216,36 +247,6 @@ public class ScriptsTable {
 		return st;
 	}
 	
-	public ScriptsTable generateScriptsTableLasi(int size){	
-		HashMap<String, BigDecimal> newChromosomes = new HashMap<>();
-		String tChom;
-		PrintWriter f0;
-		
-		try {
-			f0 = new PrintWriter(new FileWriter(pathTableScripts+"ScriptsTable" + this.id + ".txt"));
-
-			int i=0;
-			while(i<size){
-				//tChom = buildScriptGenotypeSketch();
-				tChom = buildScriptLasi();
-
-				// Não aceita cromossomos repetidos
-				if(!newChromosomes.containsKey(tChom)) {
-					newChromosomes.put(tChom, BigDecimal.valueOf(i));
-					f0.println(i+" "+tChom);
-					i++;
-				}
-
-			}
-			f0.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-
-		ScriptsTable st = new ScriptsTable(newChromosomes,pathTableScripts, this.id);
-		return st;
-	}
 
 	public String buildScriptGenotype(int sizeGenotypeScript )
 	{
@@ -549,34 +550,25 @@ public class ScriptsTable {
 	}
 	
 	public String returnBasicFunctionLasi(Boolean forclausule){
-		List<String> functionsLasi = createLasiListBasic();
-		String basicFunction="";
-		int limitInferior;
-		int limitSuperior;
-		String discreteValue;
-		String functionChosen;
-		//int id=rand.nextInt(ConfigurationsGA.QTD_RULES_BASIC_FUNCTIONS);
+		List<String> basicFunctionsLasi = createLasiListBasic();
+		String basicFunctionLasi = "";
+		String functionChosen = "";
 		
-		// Sorteia o comando (attack, harvest, ...)
-		if(forclausule==false){
-			int idBasicActionSelected = rand.nextInt(functionsLasi.size());
-			functionChosen = functionsLasi.get(idBasicActionSelected);
-			//System.out.println(functionChosen.getNameFunction());
-		} else {
-			int idBasicActionSelected = rand.nextInt(functionsLasi.size());
-			functionChosen = functionsLasi.get(idBasicActionSelected);
-			if(!functionChosen.contains("train"))
-				functionChosen = functionChosen.replace(")", ",u)");
+		// Sorteia nova função básica dentro do conjunto do Lasi (com ou ser for u)
+		if(forclausule == false){ // sem parâmetro u
+			int idBasicActionSelected = rand.nextInt(basicFunctionsLasi.size());
+			functionChosen = basicFunctionsLasi.get(idBasicActionSelected);
+		} else { // com parâmetro u
+			int idBasicActionSelected = rand.nextInt(basicFunctionsLasi.size());
+			functionChosen = basicFunctionsLasi.get(idBasicActionSelected);
+			// o u é sempre o último parâmetro
+			functionChosen = functionChosen.replace(")", ",u)");
 		}
-		// Adiciona sctring do comando sorteado e coloca parênteses
-		//basicFunction = basicFunction + functionChosen + "(";
 		
-		//basicFunction = basicFunction.substring(0, basicFunction.length() - 1);
-		basicFunction = functionChosen + " ";
-		//System.out.println(basicFunction);
-		//System.out.println("(returnBasicFunctionLasi) basicFunction: " + basicFunction);
+		// O "Clean" dessa função indica que não há espaço no final da string de retorno
+		basicFunctionLasi = functionChosen + " ";
 		
-		return basicFunction;
+		return basicFunctionLasi;
 	}
 
 	public String returnConditional(boolean forClausule)
@@ -629,31 +621,24 @@ public class ScriptsTable {
 	
 	public String returnConditionalLasi(boolean forClausule){
 		List<String> functionsLasi = createLasiListConditional();
-		String conditional="";
-		int limitInferior;
-		int limitSuperior;
-		String discreteValue;
-		//int id=rand.nextInt(ConfigurationsGA.QTD_RULES_BASIC_FUNCTIONS);
-		String functionChosen;
+		String conditionalFunctionLasi = "";
+		String functionChosen = ""; 
 		
-		if(forClausule==false){
-			int idconditionalSelected = rand.nextInt(functionsLasi.size());
-			functionChosen = functionsLasi.get(idconditionalSelected);
-		} else {
-			int idconditionalSelected = rand.nextInt(functionsLasi.size());
-			functionChosen = functionsLasi.get(idconditionalSelected);
-			if(!functionChosen.contains("HaveQtdEnemiesbyType") && !functionChosen.contains("HaveQtdUnitsAttacking") && !functionChosen.contains("HaveQtdUnitsbyType")
-					&& !functionChosen.contains("HaveQtdUnitsHarversting") )
-				functionChosen = functionChosen.replace(")", ",u)");
+		// Sorteia nova função condicional dentro do conjunto do Lasi (com ou ser for u)
+		if(forClausule == false) { // sem parâmetro u
+			int idConditionalActionSelected = rand.nextInt(functionsLasi.size());
+			functionChosen = functionsLasi.get(idConditionalActionSelected);
+		} else { // com parâmetro u
+			int idConditionalActionSelected = rand.nextInt(functionsLasi.size());
+			functionChosen = functionsLasi.get(idConditionalActionSelected);
+			// o u é sempre o último parâmetro
+			functionChosen = functionChosen.replace(")", ",u)");
 		}
+		
+		// O "Clean" dessa função indica que não há espaço no final da string de retorno
+		conditionalFunctionLasi = "if(" + functionChosen + ") ";
 
-		//conditional = conditional + functionChosen + "(";
-
-		//conditional = conditional.substring(0, conditional.length() - 1);
-		conditional="if("+functionChosen+") ";
-		//System.out.println(conditional);
-		//System.out.println("(returnConditionalLasi) conditional: " + conditional);
-		return conditional;
+		return conditionalFunctionLasi;
 	}
 
 	public String returnForFunction(){
@@ -716,8 +701,31 @@ public class ScriptsTable {
 		return basicFunction;
 	}
 	
-	// Retorna uma nova função básica totalmente aleatória, respeitando apenas a presença ou não do for(u)
+	// Retorna uma nova função básica aleatória dentro do conjunto definido pelo Lasi, salvo no arquivo (pathBasicScriptFromLasi)
 	public String returnBasicFunctionCleanLasi(Boolean forclausule){
+		List<String> basicFunctionsLasi = createLasiListBasic();
+		String basicFunctionLasi = "";
+		String functionChosen = "";
+		
+		// Sorteia nova função básica dentro do conjunto do Lasi (com ou ser for u)
+		if(forclausule == false){ // sem parâmetro u
+			int idBasicActionSelected = rand.nextInt(basicFunctionsLasi.size());
+			functionChosen = basicFunctionsLasi.get(idBasicActionSelected);
+		} else { // com parâmetro u
+			int idBasicActionSelected = rand.nextInt(basicFunctionsLasi.size());
+			functionChosen = basicFunctionsLasi.get(idBasicActionSelected);
+			// o u é sempre o último parâmetro
+			functionChosen = functionChosen.replace(")", ",u)");
+		}
+		
+		// O "Clean" dessa função indica que não há espaço no final da string de retorno
+		basicFunctionLasi = functionChosen;
+		
+		return basicFunctionLasi;
+	}
+	
+	// Retorna uma nova função básica totalmente aleatória, respeitando apenas a presença ou não do for(u)
+	public String returnBasicFunctionCleanLasi1(Boolean forclausule){
 		List<String> functionsLasi = createLasiListBasic();
 		String basicFunction = "";
 		String functionChosen;
@@ -732,8 +740,8 @@ public class ScriptsTable {
 			// Sorteia id dentro da lista de funções do Lasi e coloca ele numa string auxiliar. Coloca o u no último parâmetro caso a função aceite.
 			int idBasicActionSelected=rand.nextInt(functionsLasi.size());
 			functionChosen = functionsLasi.get(idBasicActionSelected);
-			if(!functionChosen.contains("train"))
-				functionChosen = functionChosen.replace(")", ",u)");
+			//if(!functionChosen.contains("train"))
+			functionChosen = functionChosen.replace(")", ",u)");
 		}
 
 		//basicFunction = basicFunction + functionChosen + "(";
@@ -895,6 +903,28 @@ public class ScriptsTable {
 	
 	public String returnConditionalCleanLasi(boolean forClausule) {
 		List<String> functionsLasi = createLasiListConditional();
+		String conditionalFunctionLasi = "";
+		String functionChosen = ""; 
+		
+		// Sorteia nova função condicional dentro do conjunto do Lasi (com ou ser for u)
+		if(forClausule == false) { // sem parâmetro u
+			int idConditionalActionSelected = rand.nextInt(functionsLasi.size());
+			functionChosen = functionsLasi.get(idConditionalActionSelected);
+		} else { // com parâmetro u
+			int idConditionalActionSelected = rand.nextInt(functionsLasi.size());
+			functionChosen = functionsLasi.get(idConditionalActionSelected);
+			// o u é sempre o último parâmetro
+			functionChosen = functionChosen.replace(")", ",u)");
+		}
+		
+		// O "Clean" dessa função indica que não há espaço no final da string de retorno
+		conditionalFunctionLasi = "if(" + functionChosen + ")";
+
+		return conditionalFunctionLasi;
+	}
+	
+	public String returnConditionalCleanLasi1(boolean forClausule) {
+		List<String> functionsLasi = createLasiListConditional();
 		String conditional="";
 		int limitInferior;
 		int limitSuperior;
@@ -909,9 +939,9 @@ public class ScriptsTable {
 			// Sorteia um novo condicional pelo ID dentro de for
 			int idconditionalSelected = rand.nextInt(functionsLasi.size());
 			functionChosen = functionsLasi.get(idconditionalSelected);
-			if(!functionChosen.contains("HaveQtdEnemiesbyType") && !functionChosen.contains("HaveQtdUnitsAttacking") && !functionChosen.contains("HaveQtdUnitsbyType")
-					&& !functionChosen.contains("HaveQtdUnitsHarversting") )
-				functionChosen = functionChosen.replace(")", ",u)");
+			//if(!functionChosen.contains("HaveQtdEnemiesbyType") && !functionChosen.contains("HaveQtdUnitsAttacking") && !functionChosen.contains("HaveQtdUnitsbyType")
+			//		&& !functionChosen.contains("HaveQtdUnitsHarversting") )
+			functionChosen = functionChosen.replace(")", ",u)");
 		}
 
 		//conditional=conditional+functionChosen + "(";
@@ -1157,7 +1187,7 @@ public class ScriptsTable {
 	    //news = chossingFromBag(news, parts, basicFunctions, conditionalFunctions);
 	    news = Reproduction.chossingFromBag(news, parts, basicFunctions, conditionalFunctions, true);
 	    
-	    // Itera sobre todo o vetor de partes, sorteia a chance de muta��o e substitui o novo cromossomo sobre o antigo que sofre muta��o
+	    // Itera sobre todo o vetor de partes, sorteia a chance de muta��o e substitui o novo cromossomo sobre o antigo que sofre mutação
 	    for(int i=0; i <parts.length; i++){
 	    	double mutatePercent = ConfigurationsGA.MUTATION_RATE_RULE;
 	    	boolean m = rand.nextFloat() <= mutatePercent;
@@ -1226,6 +1256,11 @@ public class ScriptsTable {
 		
 		return rules;
 	}
+	
+	
 
 	
 }
+
+//List<String> functionsLasi = createLasiListBasic();
+//createLasiListConditional

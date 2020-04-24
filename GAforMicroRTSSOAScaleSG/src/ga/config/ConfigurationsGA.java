@@ -31,7 +31,7 @@ public final class ConfigurationsGA {
 	
 	// Configurações da População 2
 	public static final int SIZE_TABLE_SCRIPTS_2 = 200;
-	public static final int SIZE_POPULATION_2 = 10; //20
+	public static final int SIZE_POPULATION_2 = 20; //20
 	public static final int SIZE_PARENTSFORCROSSOVER_2 = 8;
 	public static final int K_TOURNMENT_2 = 5;
 	public static final int SIZE_ELITE_2 = 2;
@@ -39,9 +39,9 @@ public final class ConfigurationsGA {
 	
 	// Configurações da População 1
 	public static final int SIZE_TABLE_SCRIPTS = 500;
-	public static final int SIZE_POPULATION = 10; //50
+	public static final int SIZE_POPULATION = 50; //50
 	public static final int SIZE_PARENTSFORCROSSOVER = 20;
-	public static final int K_TOURNMENT = 5; //13
+	public static final int K_TOURNMENT = 13; //13
 	public static final int SIZE_ELITE = 5;
 	public static final int SIZE_INVADERS = 5;
 	
