@@ -567,9 +567,14 @@ public class Reproduction {
 	    	double mutatePercent = ConfigurationsGA.MUTATION_RATE_RULE;
 	    	boolean m = rand.nextFloat() <= mutatePercent;
 
-	    	if(m)
+	    	if(m) {
+	    		System.out.println("parts[i] = " + parts[i]);
+	    		System.out.println("news[i] = " + news[i]);
 	    		cromScript = replaceFromCompleteGrammar(parts[i], news[i], cromScript );
+	    	}
 	    }
+	    
+	    System.out.println("Script criado na mutação: " + cromScript);
 	    
 	    // Caso o novo cromossomo gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
 	    cromScript = removingTrashFromGrammar(cromScript);
@@ -635,6 +640,8 @@ public class Reproduction {
 	    // Substitui a parte aleat�ria que vai sofrer a mutação para o novo cromossomo
 	    int partToMutate = rand.nextInt(parts.length);
 	    cromScript = replaceFromCompleteGrammar(parts[partToMutate], news[partToMutate], cromScript );
+	    
+	    System.out.println("Script criado na mutação (mandatory): " + cromScript);
 	    
 	    // Caso o novo cromossomo gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
 	    cromScript = removingTrashFromGrammar(cromScript);
@@ -811,11 +818,14 @@ public class Reproduction {
 					if(originals[i].contains(",u,") || originals[i].contains(",u)") || originals[i].contains("(u,")) {
 						// Retorna uma nova função básica totalmente aleatória, respeitando apenas a presça ou não do for(u)
 						candidates[i] = objScriptTable.returnBasicFunctionCleanLasi(true);
+						//System.out.println("Função báscia sorteada com u: " + candidates[i]);
 						
 					// Se o comando original não estava dentro de um for
 					} else {
 						candidates[i] = objScriptTable.returnBasicFunctionCleanLasi(false);
+						//System.out.println("Função básica sorteada sem u: " + candidates[i]);
 					}
+					System.out.println("Função básica sorteada: " + candidates[i]);
 					
 					found = true;
 					break;
@@ -832,124 +842,18 @@ public class Reproduction {
 						if(originals[i].contains(",u,") || originals[i].contains(",u)") || originals[i].contains("(u,")){
 							// Retorna uma nova função condicional totalmente aleatória, respeitando apenas a presça ou não do for(u)
 							candidates[i] = objScriptTable.returnConditionalCleanLasi(true);
+							//System.out.println("Função condicional sorteada com u: " + candidates[i]);
 
 						// Se o comando original não estava dentro de um for
 						} else {
 							candidates[i] = objScriptTable.returnConditionalCleanLasi(false);
+							//System.out.println("Função condicional sorteada sem u: " + candidates[i]);
 						}
+						System.out.println("Função condicional sorteada: " + candidates[i]);
 						
 						break;
 					}
 				}
-			}
-		}
-		
-		return candidates;
-	}
-	
-	public static String[]  chossingFromBagLasi1(String[] candidates, String[] originals, List<FunctionsforGrammar>basicFunctions, List<FunctionsforGrammar>conditionalFunctions, boolean same){
-		// candidates = news
-		// originais = parts
-		ScriptsTable objScriptTable = new ScriptsTable("", "objScriptTable");
-		boolean m;
-		
-		boolean found=false;
-		for (int i = 0; i < originals.length; i++){
-			found = false;
-			
-			// Itera sobre todas as funções do conjunto de funções básicas
-			for (FunctionsforGrammar function:basicFunctions){
-				
-				if(originals[i].startsWith(function.getNameFunction())){
-					//change with other basicFunction
-					// Se o comando original estava dentro de um for
-					if(originals[i].contains(",u,") || originals[i].contains(",u)") || originals[i].contains("(u,")) {
-
-						//if(same)
-						//	m = false;
-						//else
-						//	m = rand.nextFloat() <= 0.5;
-						
-						//if(m){
-							// Retorna uma nova função básica totalmente aleatória, respeitando apenas a presença ou não do for
-							//candidates[i] = objScriptTable.returnBasicFunctionClean(true);
-						
-							candidates[i] = objScriptTable.returnBasicFunctionCleanLasi(true);
-							//if(!candidates[i].contains("u"))
-							//	if(!candidates[i].contains("train"))
-							//		candidates[i] = candidates[i].replace(")", ",u)");
-							
-						//} else {
-							// Retorna uma nova função básica de acordo com a funçãoo antiga, trocando os parâmetros
-						//	candidates[i]=objScriptTable.returnBasicFunctionCleanSame(true, originals[i]);
-						//}
-					// Se o comando original não estava dentro de um for
-					} else {
-						
-						//if(same)
-						//	m = false;
-						//else
-						//	m = rand.nextFloat() <= 0.5;
-						
-						//if(m){
-							//candidates[i]=objScriptTable.returnBasicFunctionClean(false);
-							candidates[i] = objScriptTable.returnBasicFunctionCleanLasi(false);
-							//if(!candidates[i].contains("u"))
-							//	candidates[i] = candidates[i].replace(")", ",u)");
-						//} else {
-						//	candidates[i]=objScriptTable.returnBasicFunctionCleanSame(false,originals[i]);
-						//}
-					}
-					
-					found = true;
-					break;
-				}
-			}
-			
-			if(found == false){
-				
-				for (FunctionsforGrammar function:conditionalFunctions){
-					if(originals[i].startsWith(function.getNameFunction())){
-						//change with other basicFunction
-						// Se o comando original estava dentro de um for
-						if(originals[i].contains(",u,") || originals[i].contains(",u)") || originals[i].contains("(u,")){
-							// For�ar este m para o false pro TCC, usar a fun��o que retorna um script com fun��o equivalente ao original da interface
-							//if(same)
-							//	m = false;
-							//else
-							//	m = rand.nextFloat() <= 0.5;
-							
-							//if(m){
-								// Retorna uma nova fun��o condicional totalmente aleat�ria, respeitando apenas a presen�a ou n�o do for u
-								//candidates[i]=objScriptTable.returnConditionalClean(true);
-								candidates[i] = objScriptTable.returnConditionalCleanLasi(true);
-								//if(!candidates[i].contains("u"))
-								//	if(!candidates[i].contains("HaveQtdEnemiesbyType") && !candidates[i].contains("HaveQtdUnitsAttacking") && !candidates[i].contains("HaveQtdUnitsbyType")
-								//			&& !candidates[i].contains("HaveQtdUnitsHarversting") )
-								//		candidates[i] = candidates[i].replace(")", ",u)");
-							//} else {
-								// Retorna uma nova fun��o b�sica de acordo com a fun��o antiga, trocando os par�metros
-							//	candidates[i]=objScriptTable.returnConditionalCleanSame(true,originals[i]);
-							//}
-						// Se o comando original n�o estava dentro de um for
-						} else {
-							
-							//if(same)
-								//m = false;
-							//else
-								//m = rand.nextFloat() <= 0.5;
-							
-							//if(m) {
-								//candidates[i]=objScriptTable.returnConditionalClean(false);
-								candidates[i] = objScriptTable.returnConditionalCleanLasi(false);
-							//} else {
-								//candidates[i]=objScriptTable.returnConditionalCleanSame(false,originals[i]);
-							//}
-						}
-						break;
-					}
-				}
-				
 			}
 		}
 		

@@ -724,36 +724,6 @@ public class ScriptsTable {
 		return basicFunctionLasi;
 	}
 	
-	// Retorna uma nova função básica totalmente aleatória, respeitando apenas a presença ou não do for(u)
-	public String returnBasicFunctionCleanLasi1(Boolean forclausule){
-		List<String> functionsLasi = createLasiListBasic();
-		String basicFunction = "";
-		String functionChosen;
-		//int id=rand.nextInt(ConfigurationsGA.QTD_RULES_BASIC_FUNCTIONS);
-		
-		// Sorteia nova função básica (com ou sem for u)
-		if(forclausule == false){
-			// Sorteia id dentro da lista de funções do Lasi e coloca ele numa string auxiliar.
-			int idBasicActionSelected=rand.nextInt(functionsLasi.size());
-			functionChosen = functionsLasi.get(idBasicActionSelected);
-		} else {
-			// Sorteia id dentro da lista de funções do Lasi e coloca ele numa string auxiliar. Coloca o u no último parâmetro caso a função aceite.
-			int idBasicActionSelected=rand.nextInt(functionsLasi.size());
-			functionChosen = functionsLasi.get(idBasicActionSelected);
-			//if(!functionChosen.contains("train"))
-			functionChosen = functionChosen.replace(")", ",u)");
-		}
-
-		//basicFunction = basicFunction + functionChosen + "(";
-		
-		//basicFunction = basicFunction.substring(0, basicFunction.length() - 1);
-		//basicFunction = basicFunction+")";
-		basicFunction = functionChosen;
-		//System.out.println("(returnBasicFunctionCleanLasi) basicFunction Clean: " + basicFunction);
-		
-		return basicFunction;
-	}
-	
 	// Retorna uma nova fun��o b�sica de acordo com a fun��o antiga, trocando os par�metros
 	public String returnBasicFunctionCleanSame(Boolean forclausule, String oldFunction){
 		
@@ -918,40 +888,12 @@ public class ScriptsTable {
 		}
 		
 		// O "Clean" dessa função indica que não há espaço no final da string de retorno
-		conditionalFunctionLasi = "if(" + functionChosen + ")";
+		  conditionalFunctionLasi = "if(" + functionChosen + ")";
+		  conditionalFunctionLasi = functionChosen;
 
 		return conditionalFunctionLasi;
 	}
-	
-	public String returnConditionalCleanLasi1(boolean forClausule) {
-		List<String> functionsLasi = createLasiListConditional();
-		String conditional="";
-		int limitInferior;
-		int limitSuperior;
-		String discreteValue;
-		//int id=rand.nextInt(ConfigurationsGA.QTD_RULES_BASIC_FUNCTIONS);
-		String functionChosen;
-		
-		if(forClausule == false) {
-			int idconditionalSelected = rand.nextInt(functionsLasi.size());
-			functionChosen = functionsLasi.get(idconditionalSelected);
-		} else {
-			// Sorteia um novo condicional pelo ID dentro de for
-			int idconditionalSelected = rand.nextInt(functionsLasi.size());
-			functionChosen = functionsLasi.get(idconditionalSelected);
-			//if(!functionChosen.contains("HaveQtdEnemiesbyType") && !functionChosen.contains("HaveQtdUnitsAttacking") && !functionChosen.contains("HaveQtdUnitsbyType")
-			//		&& !functionChosen.contains("HaveQtdUnitsHarversting") )
-			functionChosen = functionChosen.replace(")", ",u)");
-		}
 
-		//conditional=conditional+functionChosen + "(";
-		
-		//conditional=conditional.substring(0, conditional.length() - 1);
-		conditional="if("+functionChosen+")";
-		//System.out.println("(returnConditionalCleanLasi) conditional Clean: " + conditional);
-		//return conditional+")";
-		return conditional;
-	}
 	
 	public String returnConditionalCleanSame(boolean forClausule, String oldFunction){
 		String conditional="";
@@ -1231,6 +1173,7 @@ public class ScriptsTable {
 		// Formatação da string completa
 		allCommands = allCommands.replaceAll(", ", " ").replace("[", "").replace("]", "");
 		rules = Arrays.asList( allCommands.split(" ") );
+		//System.out.println("Rules: " + rules);
 		
 		return rules;
 	}
