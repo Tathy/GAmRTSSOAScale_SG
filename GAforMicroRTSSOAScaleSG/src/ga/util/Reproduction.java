@@ -568,13 +568,11 @@ public class Reproduction {
 	    	boolean m = rand.nextFloat() <= mutatePercent;
 
 	    	if(m) {
-	    		System.out.println("parts[i] = " + parts[i]);
-	    		System.out.println("news[i] = " + news[i]);
+	    		//System.out.println("parts[i] = " + parts[i]);
+	    		//System.out.println("news[i] = " + news[i]);
 	    		cromScript = replaceFromCompleteGrammar(parts[i], news[i], cromScript );
 	    	}
 	    }
-	    
-	    System.out.println("Script criado na mutação: " + cromScript);
 	    
 	    // Caso o novo cromossomo gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
 	    cromScript = removingTrashFromGrammar(cromScript);
@@ -640,8 +638,6 @@ public class Reproduction {
 	    // Substitui a parte aleat�ria que vai sofrer a mutação para o novo cromossomo
 	    int partToMutate = rand.nextInt(parts.length);
 	    cromScript = replaceFromCompleteGrammar(parts[partToMutate], news[partToMutate], cromScript );
-	    
-	    System.out.println("Script criado na mutação (mandatory): " + cromScript);
 	    
 	    // Caso o novo cromossomo gerado já tenha um equivalente na scrTable, o ID usado será o mesmo do já existente
 	    cromScript = removingTrashFromGrammar(cromScript);
@@ -825,7 +821,7 @@ public class Reproduction {
 						candidates[i] = objScriptTable.returnBasicFunctionCleanLasi(false);
 						//System.out.println("Função básica sorteada sem u: " + candidates[i]);
 					}
-					System.out.println("Função básica sorteada: " + candidates[i]);
+					//System.out.println("Função básica sorteada: " + candidates[i]);
 					
 					found = true;
 					break;
@@ -849,7 +845,7 @@ public class Reproduction {
 							candidates[i] = objScriptTable.returnConditionalCleanLasi(false);
 							//System.out.println("Função condicional sorteada sem u: " + candidates[i]);
 						}
-						System.out.println("Função condicional sorteada: " + candidates[i]);
+						//System.out.println("Função condicional sorteada: " + candidates[i]);
 						
 						break;
 					}
